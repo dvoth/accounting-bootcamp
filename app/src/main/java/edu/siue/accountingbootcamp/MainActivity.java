@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.services.MyService;
 import edu.siue.accountingbootcamp.utils.NetworkHelper;
 
@@ -26,9 +27,14 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message =
-                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
-            output.append(message + "\n");
+
+            // Receives the parcelable quizzes from MyService.java
+            Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
+
+            // Displays the names of each quiz as a proof of concept
+            for (Quiz quiz : quizzes) {
+                output.append(quiz.getName() + "\n");
+            }
         }
     };
 

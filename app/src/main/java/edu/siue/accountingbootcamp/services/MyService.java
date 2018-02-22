@@ -6,8 +6,11 @@ import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 
+import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.utils.HttpHelper;
 
 public class MyService extends IntentService {
@@ -23,7 +26,6 @@ public class MyService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Uri uri = intent.getData();
-        Log.i(TAG, "testerton: " + uri.toString());
 
         String response;
         try {
@@ -33,8 +35,11 @@ public class MyService extends IntentService {
             return;
         }
 
+        Gson gson = new Gson();
+        Quiz[] quizzes = gson.fromJson(response, Quiz[].class);
+
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
-        messageIntent.putExtra(MY_SERVICE_PAYLOAD, response);
+        messageIntent.putExtra(MY_SERVICE_PAYLOAD, quizzes);
         LocalBroadcastManager manager =
                 LocalBroadcastManager.getInstance(getApplicationContext());
         manager.sendBroadcast(messageIntent);
