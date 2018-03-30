@@ -21,6 +21,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import edu.siue.accountingbootcamp.models.Quiz;
+import edu.siue.accountingbootcamp.models.QuizDAO;
 import edu.siue.accountingbootcamp.services.MyService;
 import edu.siue.accountingbootcamp.utils.NetworkHelper;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     ListView mDrawerList;
     String[] mCategories;
     QuizListAdapter quizListAdapter;
+    AppDatabase db;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
             Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
             quizList = Arrays.asList(quizzes);
 
+            loadOnDevice();
             displayDataItems(null);
         }
     };
@@ -55,17 +58,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        db = db.getAppDatabase(this);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rvItems);
         networkOk = NetworkHelper.hasNetworkAccess(this);
+
         if (networkOk) {
+
+            Toast.makeText(this, "Network working", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, MyService.class);
             intent.setData(Uri.parse(JSON_URL));
             startService(intent);
         } else {
             Toast.makeText(this, "Network issue", Toast.LENGTH_LONG).show();
+            quizList = loadFromDevice();
+            displayDataItems(null);
         }
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.rvItems);
 
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .registerReceiver(mBroadcastReceiver,
@@ -76,6 +84,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void loadOnDevice() {
+        QuizDAO mQuizDao = db.quizDAO();// Get DAO object
+
+        for (Quiz quiz : quizList) {
+            mQuizDao.insert(quiz);
+        }
+    }
+
+    private List <Quiz> loadFromDevice() {
+        QuizDAO mQuizDao = db.quizDAO();// Get DAO object
+        return mQuizDao.getAll();
+    }
 
     private void displayDataItems(String category) {
 //        quizList = mDataSource.getAllItems(category);
