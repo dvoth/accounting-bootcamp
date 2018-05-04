@@ -5,7 +5,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import edu.siue.accountingbootcamp.models.QuestionDAO;
+import edu.siue.accountingbootcamp.models.AnswerDAO;
 import edu.siue.accountingbootcamp.models.QuestionOptionDAO;
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.models.QuizDAO;
@@ -16,7 +16,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
     public abstract QuizDAO quizDAO();
-    public abstract QuestionDAO questionDAO();
+    public abstract AnswerDAO questionDAO();
     public abstract QuestionOptionDAO questionOptionDAO();
 
     public static AppDatabase getAppDatabase(Context context) {

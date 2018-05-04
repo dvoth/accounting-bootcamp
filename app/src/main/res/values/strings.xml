@@ -3,4 +3,5 @@
     <string name="pull_database_data">Pull Database Data</string>
     <string name="data_stream">Data Stream</string>
     <string name="title_activity_quiz">QuizActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

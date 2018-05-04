@@ -7,7 +7,7 @@ import android.arch.persistence.room.Dao;
  */
 
 @Dao
-public interface QuestionDAO {
+public interface AnswerDAO {
 //    @Query("SELECT * FROM questions WHERE quiz_id = :quizId")
 //    List<Question> getAll(int quizId);
 }

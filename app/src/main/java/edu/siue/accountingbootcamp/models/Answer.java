@@ -6,12 +6,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 @Entity(tableName = "answers")
-public class QuestionOption implements Parcelable {
+public class Answer implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String text;
-    private Boolean correctAnswer;
+    private Boolean isanswer;
     private String column;
 
     public int getId() {
@@ -30,12 +30,12 @@ public class QuestionOption implements Parcelable {
         this.text = text;
     }
 
-    public Boolean getCorrectAnswer() {
-        return correctAnswer;
+    public Boolean getIsanswer() {
+        return isanswer;
     }
 
-    public void setCorrectAnswer(Boolean correctAnswer) {
-        this.correctAnswer = correctAnswer;
+    public void setIsanswer(Boolean isanswer) {
+        this.isanswer = isanswer;
     }
 
     public String getColumn() {
@@ -55,29 +55,29 @@ public class QuestionOption implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
         dest.writeString(this.text);
-        dest.writeValue(this.correctAnswer);
+        dest.writeValue(this.isanswer);
         dest.writeString(this.column);
     }
 
-    public QuestionOption() {
+    public Answer() {
     }
 
-    protected QuestionOption(Parcel in) {
+    protected Answer(Parcel in) {
         this.id = in.readInt();
         this.text = in.readString();
-        this.correctAnswer = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.isanswer = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.column = in.readString();
     }
 
-    public static final Parcelable.Creator<QuestionOption> CREATOR = new Parcelable.Creator<QuestionOption>() {
+    public static final Parcelable.Creator<Answer> CREATOR = new Parcelable.Creator<Answer>() {
         @Override
-        public QuestionOption createFromParcel(Parcel source) {
-            return new QuestionOption(source);
+        public Answer createFromParcel(Parcel source) {
+            return new Answer(source);
         }
 
         @Override
-        public QuestionOption[] newArray(int size) {
-            return new QuestionOption[size];
+        public Answer[] newArray(int size) {
+            return new Answer[size];
         }
     };
 }

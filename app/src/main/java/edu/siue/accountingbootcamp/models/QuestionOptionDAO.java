@@ -10,5 +10,5 @@ import android.arch.persistence.room.Dao;
 public interface QuestionOptionDAO {
 
 //    @Query("SELECT * FROM answers WHERE quiz_id = :quizId AND question_id = :questionId")
-//    List<QuestionOption> getAll(int quizId, int questionId);
+//    List<Answer> getAll(int quizId, int questionId);
 }

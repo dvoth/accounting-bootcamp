@@ -17,7 +17,7 @@ public class Question implements Parcelable {
     private String text;
 
     @Ignore
-    private List<QuestionOption> questionOptions = null;
+    private List<Answer> answers = null;
 
     public int getId() {
         return id;
@@ -35,12 +35,12 @@ public class Question implements Parcelable {
         this.text = text;
     }
 
-    public List<QuestionOption> getAnswers() {
-        return questionOptions;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
-    public void setAnswers(List<QuestionOption> answers) {
-        this.questionOptions = answers;
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class Question implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
         dest.writeString(this.text);
-        dest.writeList(this.questionOptions);
+        dest.writeList(this.answers);
     }
 
     public Question() {
@@ -61,8 +61,8 @@ public class Question implements Parcelable {
     protected Question(Parcel in) {
         this.id = in.readInt();
         this.text = in.readString();
-        this.questionOptions = new ArrayList<QuestionOption>();
-        in.readList(this.questionOptions, QuestionOption.class.getClassLoader());
+        this.answers = new ArrayList<Answer>();
+        in.readList(this.answers, Answer.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {

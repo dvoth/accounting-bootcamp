@@ -15,16 +15,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import edu.siue.accountingbootcamp.models.Question;
-import edu.siue.accountingbootcamp.models.QuestionDAO;
-import edu.siue.accountingbootcamp.models.QuestionOption;
-import edu.siue.accountingbootcamp.models.QuestionOptionDAO;
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.models.QuizDAO;
 import edu.siue.accountingbootcamp.services.MyService;
@@ -98,25 +93,25 @@ public class MainActivity extends AppCompatActivity {
 
     private List <Quiz> loadFromDevice() {
         QuizDAO mQuizDao = db.quizDAO();
-        QuestionDAO mQuestionDao = db.questionDAO();
-        QuestionOptionDAO mQuestionOptionDao = db.questionOptionDAO();
-        List<Quiz> quizzes = mQuizDao.getAll();
-
-        for (Quiz quiz : quizzes) {
-            // Gets questions associated with quiz
-            List<Question> questions = new ArrayList<>();
-//            questions = mQuestionDao.getAll(quiz.getId());
-
-            for (Question question: questions) {
-                // Gets questions associated with quiz
-                List<QuestionOption> questionOptions = new ArrayList<>();
-//                questionOptions = mQuestionOptionDao.getAll(quiz.getId(), question.getId());
-
-                question.setAnswers(questionOptions);
-            }
-
-            quiz.setQuestions(questions);
-        }
+//        AnswerDAO mQuestionDao = db.questionDAO();
+//        QuestionOptionDAO mQuestionOptionDao = db.questionOptionDAO();
+//        List<Quiz> quizzes = mQuizDao.getAll();
+//
+//        for (Quiz quiz : quizzes) {
+//            // Gets questions associated with quiz
+//            List<Question> questions = new ArrayList<>();
+////            questions = mQuestionDao.getAll(quiz.getId());
+//
+//            for (Question question: questions) {
+//                // Gets questions associated with quiz
+//                List<Answer> questionOptions = new ArrayList<>();
+////                questionOptions = mQuestionOptionDao.getAll(quiz.getId(), question.getId());
+//
+//                question.setAnswers(questionOptions);
+//            }
+//
+//            quiz.setQuestions(questions);
+//        }
         
         return mQuizDao.getAll();
     }
