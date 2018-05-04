@@ -1,6 +1,7 @@
 package edu.siue.accountingbootcamp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -59,21 +59,10 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "You selected " + quiz.getName(),
-                        Toast.LENGTH_SHORT).show();
-//                String itemId = quiz.getItemId();
-//                Intent intent = new Intent(mContext, DetailActivity.class);
-//                intent.putExtra(ITEM_KEY, quiz);
-//                mContext.startActivity(intent);
-            }
-        });
-
-        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(mContext, "You long clicked ",
-                        Toast.LENGTH_SHORT).show();
-                return false;
+                int itemId = quiz.getId();
+                Intent intent = new Intent(mContext, QuizActivity.class);
+                intent.putExtra(ITEM_KEY, quiz);
+                mContext.startActivity(intent);
             }
         });
     }

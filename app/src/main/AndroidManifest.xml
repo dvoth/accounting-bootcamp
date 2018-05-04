@@ -22,7 +22,13 @@
 
         <service
             android:name=".services.MyService"
-            android:exported="false" />
+            android:exported="false"/>
+
+        <activity
+            android:name=".QuizActivity"
+            android:label="@string/title_activity_quiz"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

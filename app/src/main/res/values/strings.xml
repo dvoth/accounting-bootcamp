@@ -2,4 +2,5 @@
     <string name="app_name">Accounting Bootcamp</string>
     <string name="pull_database_data">Pull Database Data</string>
     <string name="data_stream">Data Stream</string>
+    <string name="title_activity_quiz">QuizActivity</string>
 </resources>
