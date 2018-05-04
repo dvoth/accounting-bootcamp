@@ -1,10 +1,14 @@
 package edu.siue.accountingbootcamp.models;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+@Entity(tableName = "answers")
 public class QuestionOption implements Parcelable {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String text;
     private Boolean correctAnswer;

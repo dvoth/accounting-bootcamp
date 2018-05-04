@@ -1,15 +1,22 @@
 package edu.siue.accountingbootcamp.models;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(tableName = "questions")
 public class Question implements Parcelable {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String text;
+
+    @Ignore
     private List<QuestionOption> questionOptions = null;
 
     public int getId() {
