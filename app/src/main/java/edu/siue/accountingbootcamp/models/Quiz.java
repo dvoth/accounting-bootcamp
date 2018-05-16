@@ -9,7 +9,7 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(tableName = "quizzes")
 public class Quiz implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)

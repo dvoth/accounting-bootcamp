@@ -16,6 +16,10 @@ import android.widget.Toast;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.siue.accountingbootcamp.models.Answer;
+import edu.siue.accountingbootcamp.models.Question;
+import edu.siue.accountingbootcamp.models.QuestionDAO;
+import edu.siue.accountingbootcamp.models.AnswerDAO;
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.models.QuizDAO;
 import edu.siue.accountingbootcamp.services.MyService;
@@ -50,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        db = db.getAppDatabase(this);
-        mRecyclerView = (RecyclerView) findViewById(R.id.rvItems);
+        db = AppDatabase.getAppDatabase(this);
+        mRecyclerView = findViewById(R.id.rvItems);
         networkOk = NetworkHelper.hasNetworkAccess(this);
 
         if (networkOk) {
@@ -69,10 +73,6 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .registerReceiver(mBroadcastReceiver,
                         new IntentFilter(MyService.MY_SERVICE_MESSAGE));
-
-//        networkOk = NetworkHelper.hasNetworkAccess(this);
-//        output.append("Network ok: " + networkOk);
-
     }
 
     private void loadOnDevice() {
@@ -85,25 +85,25 @@ public class MainActivity extends AppCompatActivity {
 
     private List <Quiz> loadFromDevice() {
         QuizDAO mQuizDao = db.quizDAO();
-//        AnswerDAO mQuestionDao = db.questionDAO();
-//        QuestionOptionDAO mQuestionOptionDao = db.questionOptionDAO();
-//        List<Quiz> quizzes = mQuizDao.getAll();
-//
-//        for (Quiz quiz : quizzes) {
-//            // Gets questions associated with quiz
-//            List<Question> questions = new ArrayList<>();
-////            questions = mQuestionDao.getAll(quiz.getId());
-//
-//            for (Question question: questions) {
-//                // Gets questions associated with quiz
-//                List<Answer> questionOptions = new ArrayList<>();
-////                questionOptions = mQuestionOptionDao.getAll(quiz.getId(), question.getId());
-//
-//                question.setAnswers(questionOptions);
-//            }
-//
-//            quiz.setQuestions(questions);
-//        }
+        QuestionDAO mQuestionDao = db.questionDAO();
+        AnswerDAO mAnswerDao = db.answerDAO();
+        List<Quiz> quizzes = mQuizDao.getAll();
+
+        for (Quiz quiz : quizzes) {
+            // Gets questions associated with quiz
+            List<Question> questions;
+            questions = mQuestionDao.getAll(quiz.getId());
+
+            for (Question question: questions) {
+                // Gets questions associated with quiz
+                List<Answer> answers;
+                answers = mAnswerDao.getAll(quiz.getId(), question.getId());
+
+                question.setAnswers(answers);
+            }
+
+            quiz.setQuestions(questions);
+        }
         
         return mQuizDao.getAll();
     }

@@ -1,6 +1,7 @@
 package edu.siue.accountingbootcamp.models;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
@@ -9,11 +10,19 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(tableName = "questions")
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
+@Entity(tableName = "questions",
+        foreignKeys =
+                @ForeignKey(entity = Quiz.class,
+                        parentColumns = "id",
+                        childColumns = "quizId",
+                        onDelete = CASCADE))
 public class Question implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private int quizId;
     private String text;
 
     @Ignore
@@ -76,4 +85,12 @@ public class Question implements Parcelable {
             return new Question[size];
         }
     };
+
+    public int getQuizId() {
+        return quizId;
+    }
+
+    public void setQuizId(int quizId) {
+        this.quizId = quizId;
+    }
 }

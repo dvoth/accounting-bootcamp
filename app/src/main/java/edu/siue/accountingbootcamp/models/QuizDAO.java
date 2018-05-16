@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface QuizDAO {
 
-    @Query("SELECT * FROM quiz")
+    @Query("SELECT * FROM quizzes")
     List<Quiz> getAll();
 
 
