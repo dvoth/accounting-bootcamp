@@ -67,6 +67,10 @@ public class QuizActivity extends AppCompatActivity {
         toolbar.setTitle(quiz.getName());
         setSupportActionBar(toolbar);
 
+        // Add back button to action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         displayQuestion();
     }
 
@@ -103,5 +107,11 @@ public class QuizActivity extends AppCompatActivity {
             creditTable.removeView(creditTable.getChildAt(creditTable.getChildCount() - 1));
         while (debitTable.getChildCount() > 1)
             debitTable.removeView(debitTable.getChildAt(debitTable.getChildCount() - 1));
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

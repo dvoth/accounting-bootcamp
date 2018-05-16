@@ -7,18 +7,14 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.models.QuizDAO;
@@ -34,10 +30,6 @@ public class MainActivity extends AppCompatActivity {
     TextView output;
     List<Quiz> quizList;
     RecyclerView mRecyclerView;
-    DataSource mDataSource;
-    DrawerLayout mDrawerLayout;
-    ListView mDrawerList;
-    String[] mCategories;
     QuizListAdapter quizListAdapter;
     AppDatabase db;
 
