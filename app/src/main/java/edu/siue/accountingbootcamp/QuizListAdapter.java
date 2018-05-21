@@ -55,6 +55,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         final Quiz quiz = quizList.get(position);
 
         holder.tvName.setText(quiz.getName());
+        holder.tvPercentage.setText(Integer.toString(quiz.getPercentage()) + "%");
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,12 +74,15 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tvName;
-        public View mView;
-        public ViewHolder(View itemView) {
+        TextView tvName;
+        TextView tvPercentage;
+        View mView;
+        ViewHolder(View itemView) {
             super(itemView);
 
-            tvName = (TextView) itemView.findViewById(R.id.itemNameText);
+
+            tvName = itemView.findViewById(R.id.itemNameText);
+            tvPercentage = itemView.findViewById(R.id.percentageText);
             mView = itemView;
         }
     }

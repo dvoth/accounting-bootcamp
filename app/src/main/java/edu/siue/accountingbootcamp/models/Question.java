@@ -24,6 +24,7 @@ public class Question implements Parcelable {
     private int id;
     private int quizId;
     private String text;
+    private boolean answeredCorrectly;
 
     @Ignore
     private List<Answer> answers = null;
@@ -92,5 +93,13 @@ public class Question implements Parcelable {
 
     public void setQuizId(int quizId) {
         this.quizId = quizId;
+    }
+
+    public boolean isAnsweredCorrectly() {
+        return answeredCorrectly;
+    }
+
+    public void setAnsweredCorrectly(boolean answeredCorrectly) {
+        this.answeredCorrectly = answeredCorrectly;
     }
 }

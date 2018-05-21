@@ -52,6 +52,18 @@ public class Quiz implements Parcelable {
         this.questions = questions;
     }
 
+    public int getPercentage() {
+        int answeredCorrectly = 0;
+
+        for (Question question : this.questions) {
+            if (question.isAnsweredCorrectly()) {
+                answeredCorrectly++;
+            }
+        }
+
+        return Math.round(answeredCorrectly / questions.size());
+    }
+
     @Override
     public int describeContents() {
         return 0;
