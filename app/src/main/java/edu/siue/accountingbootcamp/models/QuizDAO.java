@@ -13,11 +13,12 @@ import java.util.List;
 
 @Dao
 public interface QuizDAO {
-
     @Query("SELECT * FROM quizzes")
     List<Quiz> getAll();
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Quiz... quizzes);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Quiz> Quizzes);
 }

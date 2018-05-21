@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -75,14 +76,57 @@ public class MainActivity extends AppCompatActivity {
                         new IntentFilter(MyService.MY_SERVICE_MESSAGE));
     }
 
+    /**
+     * Loops through the quizzes from the api and stores the quizzes, questions, and answers to the device's database
+     */
     private void loadOnDevice() {
-        QuizDAO mQuizDao = db.quizDAO();// Get DAO object
+        // Get database objects
+        QuizDAO mQuizDao = db.quizDAO();
+        QuestionDAO mQuestionDao = db.questionDAO();
+        AnswerDAO mAnswerDao = db.answerDAO();
+
+        // Keeps track of the list of questions for each quiz
+        List<Question> quizQuestions;
+        // Keeps track of the list of answers for each question
+        List<Answer> questionAnswers;
+
+        // Master list of all quizzes, questions, and answers from api
+        List<Quiz> allQuizzes = new ArrayList<>();
+        List<Question> allQuestions = new ArrayList<>();
+        List<Answer> allAnswers = new ArrayList<>();
 
         for (Quiz quiz : quizList) {
-            mQuizDao.insert(quiz);
+            allQuizzes.add(quiz);
+            quizQuestions = quiz.getQuestions();
+
+            for (Question question : quizQuestions) {
+                // Manually add correct foreign key ids (Room doesn't do this automatically)
+                question.setQuizId(quiz.getId());
+                questionAnswers = question.getAnswers();
+
+                // Add question with updated foreign keys to master list
+                allQuestions.add(question);
+
+                for (Answer answer : questionAnswers) {
+                    // Manually add correct foreign key ids (Room doesn't do this automatically)
+                    answer.setQuizId(quiz.getId());
+                    answer.setQuestionId(question.getId());
+
+                    // Add answer with updated foreign keys to master list
+                    allAnswers.add(answer);
+                }
+            }
         }
+
+        // Insert all quizzes, questions, and answers in one fell swoop outside of the loops (reduces query load)
+        mQuizDao.insertAll(allQuizzes);
+        mQuestionDao.insertAll(allQuestions);
+        mAnswerDao.insertAll(allAnswers);
     }
 
+    /**
+     * If there is a network problem and we can't contact the api, load the quizzes from the device's database
+     */
     private List <Quiz> loadFromDevice() {
         QuizDAO mQuizDao = db.quizDAO();
         QuestionDAO mQuestionDao = db.questionDAO();
@@ -105,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             quiz.setQuestions(questions);
         }
         
-        return mQuizDao.getAll();
+        return quizzes;
     }
 
     private void displayDataItems(String category) {
