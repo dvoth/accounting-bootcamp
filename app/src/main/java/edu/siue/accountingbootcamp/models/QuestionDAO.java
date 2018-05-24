@@ -21,4 +21,7 @@ public interface QuestionDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Question> questions);
+
+    @Query("UPDATE questions SET answeredCorrectly = :answeredCorrectly WHERE id = :id")
+    void updateAnsweredCorrectly(int id, boolean answeredCorrectly);
 }

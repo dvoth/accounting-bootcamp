@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import edu.siue.accountingbootcamp.models.Answer;
 import edu.siue.accountingbootcamp.models.Question;
+import edu.siue.accountingbootcamp.models.QuestionDAO;
 import edu.siue.accountingbootcamp.models.Quiz;
 
 public class QuizActivity extends AppCompatActivity {
@@ -20,11 +21,13 @@ public class QuizActivity extends AppCompatActivity {
     public Quiz quiz;
     public Question question;
     public int questionNumber = 0;
+    QuestionDAO mQuestionDao;
     TableLayout creditTable;
     TableLayout debitTable;
     TextView questionText;
     Button nextButton;
     Button previousButton;
+    AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,8 @@ public class QuizActivity extends AppCompatActivity {
         debitTable = findViewById(R.id.debit_table);
         nextButton = findViewById(R.id.next_button);
         previousButton = findViewById(R.id.previous_button);
+        db = AppDatabase.getAppDatabase(this);
+        mQuestionDao = db.questionDAO();
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +95,11 @@ public class QuizActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(QuizActivity.this, answer.getIsanswer().toString(), Toast.LENGTH_SHORT).show();
+
+                    if (answer.getIsanswer()) {
+                        question.setAnsweredCorrectly(true);
+                        mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
+                    }
                 }
             });
             tr.addView(b);

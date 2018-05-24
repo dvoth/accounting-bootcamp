@@ -53,15 +53,7 @@ public class Quiz implements Parcelable {
     }
 
     public int getPercentage() {
-        int answeredCorrectly = 0;
-
-        for (Question question : this.questions) {
-            if (question.isAnsweredCorrectly()) {
-                answeredCorrectly++;
-            }
-        }
-
-        return Math.round(answeredCorrectly / questions.size());
+        return Math.round(getCorrectAnswersCount() / questions.size());
     }
 
     @Override
@@ -99,4 +91,15 @@ public class Quiz implements Parcelable {
             return new Quiz[size];
         }
     };
+
+    public int getCorrectAnswersCount() {
+        int numCorrect = 0;
+        for (Question question : questions) {
+            if (question.isAnsweredCorrectly()) {
+                numCorrect++;
+            }
+        }
+
+        return numCorrect;
+    }
 }
