@@ -9,14 +9,21 @@
     <RelativeLayout
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context="com.example.android.restful.MainActivity">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvItems"
+        <!-- We inflate these containers later when we call our fragments -->
+
+        <FrameLayout
+            android:id="@+id/quiz_list_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="LinearLayoutManager" />
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:id="@+id/quiz_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

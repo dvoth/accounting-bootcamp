@@ -1,5 +1,7 @@
 package edu.siue.accountingbootcamp;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,9 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -18,24 +17,22 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.siue.accountingbootcamp.models.Answer;
+import edu.siue.accountingbootcamp.models.AnswerDAO;
 import edu.siue.accountingbootcamp.models.Question;
 import edu.siue.accountingbootcamp.models.QuestionDAO;
-import edu.siue.accountingbootcamp.models.AnswerDAO;
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.models.QuizDAO;
 import edu.siue.accountingbootcamp.services.MyService;
 import edu.siue.accountingbootcamp.utils.NetworkHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements QuizListFragment.OnListFragmentInteractionListener,
+                   QuizFragment.OnFragmentInteractionListener{
 
     private static final String JSON_URL =
             "https://abootcamp.isg.siue.edu/api/all.php";
 
-    private boolean networkOk;
-    TextView output;
     List<Quiz> quizList;
-    RecyclerView mRecyclerView;
-    QuizListAdapter quizListAdapter;
     AppDatabase db;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -44,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
             // Receives the parcelable quizzes from MyService.java
             Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
-            quizList = Arrays.asList(quizzes);
+            quizList = new ArrayList<>(Arrays.asList(quizzes));
 
             loadOnDevice();
-            displayDataItems(null);
+            displayDataItems();
         }
     };
 
@@ -56,8 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         db = AppDatabase.getAppDatabase(this);
-        mRecyclerView = findViewById(R.id.rvItems);
-        networkOk = NetworkHelper.hasNetworkAccess(this);
+        boolean networkOk = NetworkHelper.hasNetworkAccess(this);
 
         if (networkOk) {
             Toast.makeText(this, "Network working", Toast.LENGTH_LONG).show();
@@ -67,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Network issue", Toast.LENGTH_LONG).show();
             quizList = loadFromDevice();
-            displayDataItems(null);
+            displayDataItems();
         }
 
 
@@ -152,11 +148,23 @@ public class MainActivity extends AppCompatActivity {
         return quizzes;
     }
 
-    private void displayDataItems(String category) {
-//        quizList = mDataSource.getAllItems(category);
+    private void displayDataItems() {
         if (quizList != null) {
-            quizListAdapter = new QuizListAdapter(this, quizList);
-            mRecyclerView.setAdapter(quizListAdapter);
+            FragmentManager fm = getFragmentManager();
+            Bundle bundle = new Bundle();
+
+            // Convert quiz to array to make it easier to pass to the QuizListFragment
+            Quiz[] quizArray = quizList.toArray(new Quiz[quizList.size()]);
+            bundle.putParcelableArray(QuizListFragment.QUIZ_LIST, quizArray);
+
+            // Add data to the new fragment
+            QuizListFragment fragment = new QuizListFragment();
+            fragment.setArguments(bundle);
+
+            // Add the fragment
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.quiz_list_container, fragment);
+            ft.commit();
         }
     }
 
@@ -168,20 +176,13 @@ public class MainActivity extends AppCompatActivity {
                 .unregisterReceiver(mBroadcastReceiver);
     }
 
-    public void runClickHandler(View view) {
-
-        if (networkOk) {
-            Intent intent = new Intent(this, MyService.class);
-            intent.setData(Uri.parse(JSON_URL));
-            this.startService(intent);
-        } else {
-            Toast.makeText(this, "Network not available", Toast.LENGTH_SHORT).show();
-        }
-
+    @Override
+    public void onListFragmentInteraction() {
+        // Left empty for QuizListFragment interface method implementation
     }
 
-    public void clearClickHandler(View view) {
-        output.setText("");
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        // Left empty for QuizFragment interface method implementation
     }
-
 }

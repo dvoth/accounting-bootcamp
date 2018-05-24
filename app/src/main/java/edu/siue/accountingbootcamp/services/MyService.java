@@ -38,6 +38,11 @@ public class MyService extends IntentService {
         Gson gson = new Gson();
         Quiz[] quizzes = gson.fromJson(response, Quiz[].class);
 
+        // Convert questions List received from api to be compatible with LiveData object
+        for (Quiz quiz : quizzes) {
+            quiz.setQuestions(quiz.getQuestionsFromApi());
+        }
+
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
         messageIntent.putExtra(MY_SERVICE_PAYLOAD, quizzes);
         LocalBroadcastManager manager =
