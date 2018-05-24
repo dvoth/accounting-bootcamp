@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.siue.accountingbootcamp.QuizActivity">
+    tools:context="edu.siue.accountingbootcamp.QuizActivity"
+    android:background="@color/background">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -32,14 +33,14 @@
             layout="@layout/content_quiz"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="55dp"
             android:layout_above="@+id/next_button"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="55dp"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/next_button"
@@ -63,6 +64,14 @@
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
             android:text="Previous"/>
+
+        <TextView
+            android:id="@+id/score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/next_button"
+            android:layout_centerHorizontal="true"
+            android:text="TextView"/>
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
