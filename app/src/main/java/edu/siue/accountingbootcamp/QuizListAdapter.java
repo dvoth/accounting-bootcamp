@@ -70,7 +70,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
 
                 // Add the new fragment on top of the previous
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.quiz_list_container, fragment);
+                ft.replace(R.id.quiz_list_container, fragment);
 
                 // Add to back stack so we can press the back button to return to the QuizListFragment
                 ft.addToBackStack(null);

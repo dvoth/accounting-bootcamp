@@ -63,7 +63,10 @@ public class Quiz extends ViewModel implements Parcelable {
     }
 
     public int getPercentage() {
-        return Math.round(getCorrectAnswersCount() / questions.getValue().size());
+        int correct = getCorrectAnswersCount();
+        int size = questions.getValue().size();
+        double answer = ((double) correct/size) * 100;
+        return (int) Math.round(answer);
     }
 
     @Override
