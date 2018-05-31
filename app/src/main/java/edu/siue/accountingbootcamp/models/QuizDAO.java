@@ -7,10 +7,6 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-/**
- * Created by chrismeats on 3/29/18.
- */
-
 @Dao
 public interface QuizDAO {
     @Query("SELECT * FROM quizzes")

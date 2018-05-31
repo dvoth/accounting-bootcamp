@@ -22,7 +22,7 @@ import edu.siue.accountingbootcamp.models.Question;
 import edu.siue.accountingbootcamp.models.QuestionDAO;
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.models.QuizDAO;
-import edu.siue.accountingbootcamp.services.MyService;
+import edu.siue.accountingbootcamp.services.ApiService;
 import edu.siue.accountingbootcamp.utils.NetworkHelper;
 
 public class MainActivity extends AppCompatActivity
@@ -39,12 +39,12 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            // Receives the parcelable quizzes from MyService.java
-            Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
+            // Receives the parcelable quizzes from ApiService.java
+            Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(ApiService.MY_SERVICE_PAYLOAD);
             quizList = new ArrayList<>(Arrays.asList(quizzes));
 
             loadOnDevice();
-            displayDataItems();
+            displayQuizList();
         }
     };
 
@@ -57,19 +57,19 @@ public class MainActivity extends AppCompatActivity
 
         if (networkOk) {
             Toast.makeText(this, "Network working", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, MyService.class);
+            Intent intent = new Intent(this, ApiService.class);
             intent.setData(Uri.parse(JSON_URL));
             startService(intent);
         } else {
             Toast.makeText(this, "Network issue", Toast.LENGTH_LONG).show();
             quizList = loadFromDevice();
-            displayDataItems();
+            displayQuizList();
         }
 
 
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .registerReceiver(mBroadcastReceiver,
-                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
+                        new IntentFilter(ApiService.MY_SERVICE_MESSAGE));
     }
 
     /**
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
         return quizzes;
     }
 
-    private void displayDataItems() {
+    private void displayQuizList() {
         if (quizList != null) {
             FragmentManager fm = getFragmentManager();
             Bundle bundle = new Bundle();

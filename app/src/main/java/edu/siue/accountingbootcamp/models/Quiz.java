@@ -30,6 +30,9 @@ public class Quiz extends ViewModel implements Parcelable {
     // Done because we can't put questions from the api directly into a MutableLiveData object
     private transient MutableLiveData<List<Question>> questions = new MutableLiveData<>();
 
+    /*
+        GETTERS AND SETTERS
+     */
     public int getId() {
         return id;
     }
@@ -62,13 +65,17 @@ public class Quiz extends ViewModel implements Parcelable {
         this.questions.postValue(questionse);
     }
 
-    public int getPercentage() {
-        int correct = getCorrectAnswersCount();
-        int size = questions.getValue().size();
-        double answer = ((double) correct/size) * 100;
-        return (int) Math.round(answer);
+    public List<Question> getQuestionsFromApi() {
+        return questionsFromApi;
     }
 
+    public void setQuestionsFromApi(List<Question> questionsFromApi) {
+        this.questionsFromApi = questionsFromApi;
+    }
+
+    /*
+        PARCELABLE INTERFACE METHODS
+     */
     @Override
     public int describeContents() {
         return 0;
@@ -104,6 +111,16 @@ public class Quiz extends ViewModel implements Parcelable {
         }
     };
 
+    /*
+        UTILITY METHODS
+     */
+    public int getPercentage() {
+        int correct = getCorrectAnswersCount();
+        int size = questions.getValue().size();
+        double answer = ((double) correct/size) * 100;
+        return (int) Math.round(answer);
+    }
+
     public int getCorrectAnswersCount() {
         int numCorrect = 0;
         for (Question question : questions.getValue()) {
@@ -113,13 +130,5 @@ public class Quiz extends ViewModel implements Parcelable {
         }
 
         return numCorrect;
-    }
-
-    public List<Question> getQuestionsFromApi() {
-        return questionsFromApi;
-    }
-
-    public void setQuestionsFromApi(List<Question> questionsFromApi) {
-        this.questionsFromApi = questionsFromApi;
     }
 }

@@ -29,6 +29,9 @@ public class Answer implements Parcelable {
     private Boolean isanswer;
     private String column;
 
+    /*
+       GETTERS AND SETTERS
+     */
     public int getId() {
         return id;
     }
@@ -60,6 +63,26 @@ public class Answer implements Parcelable {
     public void setColumn(String column) {
         this.column = column;
     }
+
+    public int getQuizId() {
+        return quizId;
+    }
+
+    public void setQuizId(int quizId) {
+        this.quizId = quizId;
+    }
+
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
+    }
+
+    /*
+        PARCELABLE INTERFACE METHODS
+     */
 
     @Override
     public int describeContents() {
@@ -95,20 +118,4 @@ public class Answer implements Parcelable {
             return new Answer[size];
         }
     };
-
-    public int getQuizId() {
-        return quizId;
-    }
-
-    public void setQuizId(int quizId) {
-        this.quizId = quizId;
-    }
-
-    public int getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(int questionId) {
-        this.questionId = questionId;
-    }
 }

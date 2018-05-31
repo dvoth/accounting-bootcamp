@@ -13,14 +13,14 @@ import java.io.IOException;
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.utils.HttpHelper;
 
-public class MyService extends IntentService {
+public class ApiService extends IntentService {
 
-    public static final String TAG = "MyService";
+    public static final String TAG = "ApiService";
     public static final String MY_SERVICE_MESSAGE = "myServiceMessage";
     public static final String MY_SERVICE_PAYLOAD = "myServicePayload";
 
-    public MyService() {
-        super("MyService");
+    public ApiService() {
+        super("ApiService");
     }
 
     @Override

@@ -29,6 +29,9 @@ public class Question implements Parcelable {
     @Ignore
     private List<Answer> answers = null;
 
+    /*
+        GETTERS AND SETTERS
+     */
     public int getId() {
         return id;
     }
@@ -53,6 +56,25 @@ public class Question implements Parcelable {
         this.answers = answers;
     }
 
+    public int getQuizId() {
+        return quizId;
+    }
+
+    public void setQuizId(int quizId) {
+        this.quizId = quizId;
+    }
+
+    public boolean isAnsweredCorrectly() {
+        return answeredCorrectly;
+    }
+
+    public void setAnsweredCorrectly(boolean answeredCorrectly) {
+        this.answeredCorrectly = answeredCorrectly;
+    }
+
+    /*
+        PARCELABLE INTERFACE METHODS
+     */
     @Override
     public int describeContents() {
         return 0;
@@ -86,20 +108,4 @@ public class Question implements Parcelable {
             return new Question[size];
         }
     };
-
-    public int getQuizId() {
-        return quizId;
-    }
-
-    public void setQuizId(int quizId) {
-        this.quizId = quizId;
-    }
-
-    public boolean isAnsweredCorrectly() {
-        return answeredCorrectly;
-    }
-
-    public void setAnsweredCorrectly(boolean answeredCorrectly) {
-        this.answeredCorrectly = answeredCorrectly;
-    }
 }

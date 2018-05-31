@@ -89,7 +89,7 @@ public class QuizFragment extends Fragment {
         previousButton = view.findViewById(R.id.previous_button);
         questionText = view.findViewById(R.id.question_text);
 
-
+        // Listeners for next and previous questions
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,6 +126,7 @@ public class QuizFragment extends Fragment {
         question = quiz.getQuestions().get(questionNumber);
         questionText.setText(question.getText());
 
+        // Create a table row for each available answer and add it to the necessary column
         for (final Answer answer : question.getAnswers()) {
             TableRow tr = new TableRow(getActivity());
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));

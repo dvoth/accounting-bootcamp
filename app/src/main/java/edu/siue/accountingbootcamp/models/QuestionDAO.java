@@ -7,10 +7,6 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-/**
- * Created by chrismeats on 5/16/18.
- */
-
 @Dao
 public interface QuestionDAO {
     @Query("SELECT * FROM questions WHERE quizId = :quizId")

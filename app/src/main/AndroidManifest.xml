@@ -21,7 +21,7 @@
         </activity>
 
         <service
-            android:name=".services.MyService"
+            android:name=".services.ApiService"
             android:exported="false"/>
 
     </application>
