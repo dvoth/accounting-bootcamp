@@ -5,8 +5,15 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,12 +56,30 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         return new ViewHolder(itemView);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBindViewHolder(QuizListAdapter.ViewHolder holder, int position) {
         final Quiz quiz = quizList.get(position);
 
+        ColorFilter green = new LightingColorFilter( Color.parseColor("#216C2A"), Color.parseColor("#216C2A"));
+        ColorFilter red = new LightingColorFilter( Color.parseColor("#8A0707"), Color.parseColor("#8A0707"));
+        ColorFilter grey = new LightingColorFilter( Color.GRAY, Color.GRAY);
+        Drawable percentageCircle = ContextCompat.getDrawable(mContext, R.drawable.circle);
+        percentageCircle.setColorFilter(red);
+
         holder.tvName.setText(quiz.getName());
+
+        if (quiz.getPercentage() == 0) {
+            percentageCircle.setColorFilter(grey);
+        } else if (quiz.getPercentage() > 70) {
+            percentageCircle.setColorFilter(green);
+        } else {
+            percentageCircle.setColorFilter(red);
+        }
+
+        holder.tvPercentage.setBackground(percentageCircle);
         holder.tvPercentage.setText(Integer.toString(quiz.getPercentage()) + "%");
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
