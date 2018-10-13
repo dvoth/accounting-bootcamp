@@ -12,6 +12,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
 
 import edu.siue.accountingbootcamp.models.Answer;
 import edu.siue.accountingbootcamp.models.Question;
@@ -131,8 +132,9 @@ public class QuizFragment extends Fragment {
             TableRow tr = new TableRow(getActivity());
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-            Button b = new Button(getActivity());
+            final Button b = new Button(getActivity());
             b.setText(answer.getText());
+            b.setBackgroundResource(R.drawable.btn_default_normal);
             b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -142,6 +144,9 @@ public class QuizFragment extends Fragment {
                     if (answer.getIsanswer()) {
                         question.setAnsweredCorrectly(true);
                         mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
+                        b.setBackgroundColor(Color.rgb(112, 43, 45));
+                    } else {
+                        b.setBackgroundColor(Color.RED);
                     }
                 }
             });
