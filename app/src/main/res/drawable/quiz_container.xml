@@ -9,7 +9,8 @@
     </item>
 
     <item android:bottom="1dp">
-        <shape android:shape="rectangle">
+        <shape android:shape="rectangle"
+            android:id="@+id/quizBackground">
             <solid android:color="@color/background" />
         </shape>
     </item>

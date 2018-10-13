@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="dark_grey_border">#8e8e8e</color>
     <color name="background">#cecece</color>
+    <color name="inaccessible">#e0e0e0</color>
 </resources>

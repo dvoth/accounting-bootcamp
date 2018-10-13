@@ -30,6 +30,9 @@ public class Quiz extends ViewModel implements Parcelable {
     // Done because we can't put questions from the api directly into a MutableLiveData object
     private transient MutableLiveData<List<Question>> questions = new MutableLiveData<>();
 
+    @Ignore
+    private static final int PASS_PERCENTAGE = 70;
+
     /*
         GETTERS AND SETTERS
      */
@@ -130,5 +133,9 @@ public class Quiz extends ViewModel implements Parcelable {
         }
 
         return numCorrect;
+    }
+
+    public int getPassPercentage() {
+        return PASS_PERCENTAGE;
     }
 }

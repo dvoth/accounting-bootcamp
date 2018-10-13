@@ -1,5 +1,6 @@
 package edu.siue.accountingbootcamp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.shapes.Shape;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,25 +21,31 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import edu.siue.accountingbootcamp.models.Quiz;
+import edu.siue.accountingbootcamp.models.QuizDAO;
 
 public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHolder> {
 
     private List<Quiz> quizList;
     private Context mContext;
+    QuizDAO mQuizDao;
+    AppDatabase db;
+
 
     QuizListAdapter(Context context, List<Quiz> items) {
         this.mContext = context;
         this.quizList = items;
+        db = AppDatabase.getAppDatabase(mContext);
+        mQuizDao = db.quizDAO();
     }
 
     @Override
     public QuizListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         SharedPreferences settings =
                 PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.OnSharedPreferenceChangeListener prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -60,11 +68,16 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
     @Override
     public void onBindViewHolder(QuizListAdapter.ViewHolder holder, int position) {
         final Quiz quiz = quizList.get(position);
+        Quiz previousQuiz = quizList.get(quiz.getQuizOrder() - 1);
+        @SuppressLint("ResourceType") String lightGreyString = mContext.getString(R.color.inaccessible);
 
         ColorFilter green = new LightingColorFilter( Color.parseColor("#216C2A"), Color.parseColor("#216C2A"));
         ColorFilter red = new LightingColorFilter( Color.parseColor("#8A0707"), Color.parseColor("#8A0707"));
         ColorFilter grey = new LightingColorFilter( Color.GRAY, Color.GRAY);
+
+        Drawable lightGreyBackground = ContextCompat.getDrawable(mContext, R.drawable.quiz_container_light);
         Drawable percentageCircle = ContextCompat.getDrawable(mContext, R.drawable.circle);
+
         percentageCircle.setColorFilter(red);
 
         holder.tvName.setText(quiz.getName());
@@ -80,28 +93,31 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         holder.tvPercentage.setBackground(percentageCircle);
         holder.tvPercentage.setText(Integer.toString(quiz.getPercentage()) + "%");
 
+        if (previousQuiz.getPercentage() >= previousQuiz.getPassPercentage() || position == 0 ) {
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // get fragment manager
+                    FragmentManager fm = ((Activity) mContext).getFragmentManager();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(QuizFragment.QUIZ_KEY, quiz);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // get fragment manager
-                FragmentManager fm = ((Activity) mContext).getFragmentManager();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(QuizFragment.QUIZ_KEY, quiz);
+                    // Add data to the new fragment
+                    QuizFragment fragment = new QuizFragment();
+                    fragment.setArguments(bundle);
 
-                // Add data to the new fragment
-                QuizFragment fragment = new QuizFragment();
-                fragment.setArguments(bundle);
+                    // Add the new fragment on top of the previous
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.quiz_list_container, fragment);
 
-                // Add the new fragment on top of the previous
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.quiz_list_container, fragment);
-
-                // Add to back stack so we can press the back button to return to the QuizListFragment
-                ft.addToBackStack(null);
-                ft.commit();
-            }
-        });
+                    // Add to back stack so we can press the back button to return to the QuizListFragment
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+            });
+        } else {
+            holder.mView.setBackground(lightGreyBackground);
+        }
     }
 
     public int getItemCount() {
