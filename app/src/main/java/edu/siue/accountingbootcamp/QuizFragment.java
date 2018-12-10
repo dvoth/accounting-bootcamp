@@ -97,7 +97,7 @@ public class QuizFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (questionNumber < quiz.getQuestions().size() - 1) {
+                if (questionNumber < quiz.getQuestions().size() - 1 && question.isAnswerAttempted()) {
                     questionNumber++;
                     clearTables();
                     displayQuestion();

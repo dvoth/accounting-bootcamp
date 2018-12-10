@@ -68,7 +68,11 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
     @Override
     public void onBindViewHolder(QuizListAdapter.ViewHolder holder, int position) {
         final Quiz quiz = quizList.get(position);
-        Quiz previousQuiz = quizList.get(quiz.getQuizOrder() - 1);
+
+        // quizOrder - 2 to account for
+        //  1.) convert to zero-indexed array
+        //  2.) actually getting the previous index in zero-indexed array
+        Quiz previousQuiz = (position > 0) ? quizList.get(quiz.getQuizOrder() - 2) : quiz;
         @SuppressLint("ResourceType") String lightGreyString = mContext.getString(R.color.inaccessible);
 
         ColorFilter green = new LightingColorFilter( Color.parseColor("#216C2A"), Color.parseColor("#216C2A"));
