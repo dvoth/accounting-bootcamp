@@ -13,6 +13,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.siue.accountingbootcamp.models.Answer;
 import edu.siue.accountingbootcamp.models.Question;
 import edu.siue.accountingbootcamp.models.QuestionDAO;
@@ -88,6 +91,7 @@ public class QuizFragment extends Fragment {
         nextButton = view.findViewById(R.id.next_button);
         previousButton = view.findViewById(R.id.previous_button);
         questionText = view.findViewById(R.id.question_text);
+        questionNumber = quiz.getCurrentQuestion();
 
         // Listeners for next and previous questions
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +142,8 @@ public class QuizFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getActivity(), answer.getIsanswer().toString(), Toast.LENGTH_SHORT).show();
+
+                    question.setAnswerAttempted(true);
 
                     if (answer.getIsanswer()) {
                         question.setAnsweredCorrectly(true);

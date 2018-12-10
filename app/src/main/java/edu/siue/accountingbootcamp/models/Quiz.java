@@ -138,4 +138,19 @@ public class Quiz extends ViewModel implements Parcelable {
     public int getPassPercentage() {
         return PASS_PERCENTAGE;
     }
+
+    public int getCurrentQuestion() {
+        // Initialize to the last question to return if the entire quiz is completed
+        int questionNumber = questionsFromApi.size() - 1;
+
+        // Return the first question that isn't attempted
+        for (int i=0; i<questionsFromApi.size() - 1; i++) {
+            if (!questionsFromApi.get(i).isAnswerAttempted()) {
+                return i;
+            }
+        }
+
+        // If all questions were attempted, return the last question
+        return questionNumber;
+    }
 }
