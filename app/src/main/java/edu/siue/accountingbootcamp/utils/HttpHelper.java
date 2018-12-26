@@ -29,8 +29,6 @@ public class HttpHelper {
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
