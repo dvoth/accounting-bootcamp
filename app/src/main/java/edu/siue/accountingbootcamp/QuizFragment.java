@@ -12,6 +12,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.siue.accountingbootcamp.models.Answer;
 import edu.siue.accountingbootcamp.models.Question;
@@ -88,12 +92,13 @@ public class QuizFragment extends Fragment {
         nextButton = view.findViewById(R.id.next_button);
         previousButton = view.findViewById(R.id.previous_button);
         questionText = view.findViewById(R.id.question_text);
+        questionNumber = quiz.getCurrentQuestion();
 
         // Listeners for next and previous questions
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (questionNumber < quiz.getQuestions().size() - 1) {
+                if (questionNumber < quiz.getQuestions().size() - 1 && question.isAnswerAttempted()) {
                     questionNumber++;
                     clearTables();
                     displayQuestion();
@@ -131,17 +136,23 @@ public class QuizFragment extends Fragment {
             TableRow tr = new TableRow(getActivity());
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-            Button b = new Button(getActivity());
+            final Button b = new Button(getActivity());
             b.setText(answer.getText());
+            b.setBackgroundResource(R.drawable.btn_default_normal);
             b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getActivity(), answer.getIsanswer().toString(), Toast.LENGTH_SHORT).show();
 
+                    question.setAnswerAttempted(true);
+
                     if (answer.getIsanswer()) {
                         question.setAnsweredCorrectly(true);
                         mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
+                        b.setBackgroundColor(Color.rgb(112, 43, 45));
+                    } else {
+                        b.setBackgroundColor(Color.RED);
                     }
                 }
             });

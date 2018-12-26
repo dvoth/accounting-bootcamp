@@ -25,6 +25,7 @@ public class Question implements Parcelable {
     private int quizId;
     private String text;
     private boolean answeredCorrectly;
+    private boolean answerAttempted;
 
     @Ignore
     private List<Answer> answers = null;
@@ -70,6 +71,14 @@ public class Question implements Parcelable {
 
     public void setAnsweredCorrectly(boolean answeredCorrectly) {
         this.answeredCorrectly = answeredCorrectly;
+    }
+
+    public boolean isAnswerAttempted() {
+        return answerAttempted;
+    }
+
+    public void setAnswerAttempted(boolean answerAttempted) {
+        this.answerAttempted = answerAttempted;
     }
 
     /*
