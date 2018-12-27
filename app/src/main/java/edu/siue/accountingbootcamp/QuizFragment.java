@@ -150,7 +150,7 @@ public class QuizFragment extends Fragment {
                     if (answer.getIsanswer()) {
                         question.setAnsweredCorrectly(true);
                         mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
-                        b.setBackgroundColor(Color.rgb(112, 43, 45));
+                        b.setBackgroundColor(Color.GREEN);
                     } else {
                         b.setBackgroundColor(Color.RED);
                     }

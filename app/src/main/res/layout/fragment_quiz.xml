@@ -47,13 +47,6 @@
             android:layout_marginStart="30dp"
             android:text="Prev" />
 
-        <TextView
-            android:id="@+id/score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/next_button"
-            android:layout_centerHorizontal="true"
-            android:text="TextView" />
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

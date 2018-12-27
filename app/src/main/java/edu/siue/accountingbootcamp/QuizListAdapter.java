@@ -42,6 +42,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         this.quizList = items;
         db = AppDatabase.getAppDatabase(mContext);
         mQuizDao = db.quizDAO();
+        Log.i("view holder", "constructor");
     }
 
     @Override
@@ -80,6 +81,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         ColorFilter grey = new LightingColorFilter( Color.GRAY, Color.GRAY);
 
         Drawable lightGreyBackground = ContextCompat.getDrawable(mContext, R.drawable.quiz_container_light);
+        Drawable darkGreyBackground = ContextCompat.getDrawable(mContext, R.drawable.quiz_container_dark);
         Drawable percentageCircle = ContextCompat.getDrawable(mContext, R.drawable.circle);
 
         percentageCircle.setColorFilter(red);
@@ -98,6 +100,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         holder.tvPercentage.setText(Integer.toString(quiz.getPercentage()) + "%");
 
         if (previousQuiz.getPercentage() >= previousQuiz.getPassPercentage() || position == 0 ) {
+            holder.mView.setBackground(darkGreyBackground);
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
