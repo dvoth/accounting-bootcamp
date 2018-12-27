@@ -124,6 +124,7 @@ public class QuizFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        clearTables();
         displayQuestion();
     }
 
@@ -140,28 +141,57 @@ public class QuizFragment extends Fragment {
             b.setText(answer.getText());
             b.setBackgroundResource(R.drawable.btn_default_normal);
             b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getActivity(), answer.getIsanswer().toString(), Toast.LENGTH_SHORT).show();
-
-                    question.setAnswerAttempted(true);
-
-                    if (answer.getIsanswer()) {
-                        question.setAnsweredCorrectly(true);
-                        mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
-                        b.setBackgroundColor(Color.GREEN);
-                    } else {
-                        b.setBackgroundColor(Color.RED);
-                    }
+            if (question.isAnswerAttempted()) {
+                if (question.isAnsweredCorrectly() && answer.getIsanswer()) {
+                    b.setBackgroundColor(Color.GREEN);
+                } else if (!question.isAnsweredCorrectly() && answer.isSelectedAnswer()){
+                    b.setBackgroundColor(Color.RED);
                 }
-            });
+            } else {
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getActivity(), answer.getIsanswer().toString(), Toast.LENGTH_SHORT).show();
+
+                        question.setAnswerAttempted(true);
+                        answer.setSelectedAnswer(true);
+
+                        if (answer.getIsanswer()) {
+                            question.setAnsweredCorrectly(true);
+                            mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
+                            b.setBackgroundColor(Color.GREEN);
+                        } else {
+                            b.setBackgroundColor(Color.RED);
+                        }
+
+                        removeTableClickListeners(creditTable);
+                        removeTableClickListeners(debitTable);
+                    }
+                });
+            }
+
             tr.addView(b);
             String column = answer.getColumn();
             if (column.equals("dr")) {
                 debitTable.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
             } else {
                 creditTable.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            }
+        }
+    }
+
+    private void removeTableClickListeners(TableLayout table) {
+        for (int i=0; i < table.getChildCount(); i++) {
+            TableRow tr = (TableRow) table.getChildAt(i);
+            removeTableRowClickListeners(tr);
+        }
+    }
+
+    private void removeTableRowClickListeners(TableRow tr) {
+        for (int j=0; j < tr.getChildCount(); j++) {
+            if (tr.getChildAt(j).getClass().getSimpleName().equals("Button")) {
+                Button b = (Button) tr.getChildAt(j);
+                b.setOnClickListener(null);
             }
         }
     }
