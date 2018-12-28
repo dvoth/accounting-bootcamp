@@ -153,4 +153,11 @@ public class Quiz extends ViewModel implements Parcelable {
         // If all questions were attempted, return the last question
         return questionNumber;
     }
+
+    public void reset() {
+        for (Question question : getQuestions()) {
+            question.setAnswerAttempted(false);
+            question.setAnsweredCorrectly(false);
+        }
+    }
 }

@@ -84,6 +84,10 @@ public class QuizFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Ensures fragments don't display over one another
+        if (container != null) {
+            container.removeAllViews();
+        }
 
         View view = inflater.inflate(R.layout.fragment_quiz, container, false);
 

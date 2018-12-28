@@ -60,6 +60,12 @@ public class QuizListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Ensures fragments don't display over one another
+        if (container != null) {
+            container.removeAllViews();
+        }
+
         // Inflate the recycler view and set the adapter to it
         View view = inflater.inflate(R.layout.fragment_quiz_list, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.quiz_recycler_view);
