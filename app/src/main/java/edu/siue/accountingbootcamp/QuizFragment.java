@@ -1,9 +1,13 @@
 package edu.siue.accountingbootcamp;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +43,7 @@ public class QuizFragment extends Fragment {
     public Quiz quiz;
     public Question question;
     public int questionNumber = 0;
+    private Context mContext;
     QuestionDAO mQuestionDao;
     TableLayout creditTable;
     TableLayout debitTable;
@@ -90,7 +95,6 @@ public class QuizFragment extends Fragment {
         }
 
         View view = inflater.inflate(R.layout.fragment_quiz, container, false);
-
         creditTable = view.findViewById(R.id.credit_table);
         debitTable = view.findViewById(R.id.debit_table);
         nextButton = view.findViewById(R.id.next_button);
@@ -102,10 +106,26 @@ public class QuizFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (questionNumber < quiz.getQuestions().size() - 1 && question.isAnswerAttempted()) {
+                if (questionNumber < quiz.getLastQuestionIndex() && question.isAnswerAttempted()) {
                     questionNumber++;
                     clearTables();
                     displayQuestion();
+                } else if (questionNumber == quiz.getLastQuestionIndex()) {
+                    // get fragment manager
+                    FragmentManager fm = ((Activity) mContext).getFragmentManager();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(ResultsFragment.RESULTS_KEY, quiz);
+
+                    // Add data to the new fragment
+                    ResultsFragment fragment = new ResultsFragment();
+                    fragment.setArguments(bundle);
+
+                    // Add the new fragment on top of the previous
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.quiz_list_container, fragment);
+
+                    // Add to back stack so we can press the back button to return to the QuizListFragment
+                    ft.commit();
                 }
             }
         });
@@ -129,7 +149,7 @@ public class QuizFragment extends Fragment {
         super.onStart();
         clearTables();
 
-        Question lastQuestion = quiz.getQuestions().get(quiz.getQuestions().size() - 1);
+        Question lastQuestion = quiz.getQuestions().get(quiz.getLastQuestionIndex());
 
         if (lastQuestion.isAnswerAttempted()) {
             displayResultsPage();
@@ -143,8 +163,14 @@ public class QuizFragment extends Fragment {
     }
 
     private void displayQuestion() {
+        TextView quizProgress = getView().findViewById(R.id.quiz_progress);
+        quizProgress.setText(questionNumber + 1 + "/" + quiz.getQuestions().size());
         question = quiz.getQuestions().get(questionNumber);
         questionText.setText(question.getText());
+
+        if (questionNumber == quiz.getLastQuestionIndex()) {
+            nextButton.setText("Finish");
+        }
 
         // Create a table row for each available answer and add it to the necessary column
         for (final Answer answer : question.getAnswers()) {
@@ -165,8 +191,6 @@ public class QuizFragment extends Fragment {
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getActivity(), answer.getIsanswer().toString(), Toast.LENGTH_SHORT).show();
-
                         question.setAnswerAttempted(true);
                         answer.setSelectedAnswer(true);
 
@@ -227,6 +251,7 @@ public class QuizFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

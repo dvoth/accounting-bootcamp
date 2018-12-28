@@ -36,6 +36,9 @@ public class Quiz extends ViewModel implements Parcelable {
     @Ignore
     private boolean locked;
 
+    @Ignore
+    private int lastQuestionIndex;
+
     /*
         GETTERS AND SETTERS
      */
@@ -67,8 +70,9 @@ public class Quiz extends ViewModel implements Parcelable {
         return questions.getValue();
     }
 
-    public void setQuestions(List<Question> questionse) {
-        this.questions.postValue(questionse);
+    public void setQuestions(List<Question> questions) {
+        this.questions.postValue(questions);
+        lastQuestionIndex = questions.size() - 1;
     }
 
     public List<Question> getQuestionsFromApi() {
@@ -85,6 +89,14 @@ public class Quiz extends ViewModel implements Parcelable {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public int getLastQuestionIndex() {
+        return lastQuestionIndex;
+    }
+
+    public void setLastQuestionIndex(int lastQuestionIndex) {
+        this.lastQuestionIndex = lastQuestionIndex;
     }
 
     /*

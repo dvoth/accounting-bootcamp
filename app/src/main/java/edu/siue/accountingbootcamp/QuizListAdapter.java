@@ -105,7 +105,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Question lastQuestion = quiz.getQuestions().get(quiz.getQuestions().size() - 1);
+                    Question lastQuestion = quiz.getQuestions().get(quiz.getLastQuestionIndex());
 
                     if (lastQuestion.isAnswerAttempted()) {
                         createResultsFragment(quiz);

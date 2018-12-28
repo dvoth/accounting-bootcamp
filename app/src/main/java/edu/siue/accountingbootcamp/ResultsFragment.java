@@ -63,8 +63,8 @@ public class ResultsFragment extends Fragment {
         TextView quizName = getView().findViewById(R.id.quiz_name);
         TextView quizScore = getView().findViewById(R.id.quiz_score);
 
-        quizName.setText(quiz.getName());
-        quizScore.setText(correctAnswers + "/" + totalAnswers + " (" + quiz.getPercentage() + "%)");
+        quizName.append(" " + quiz.getName());
+        quizScore.append(" " + correctAnswers + "/" + totalAnswers + " (" + quiz.getPercentage() + "%)");
 
         Button tryAgain = getView().findViewById(R.id.try_again);
 

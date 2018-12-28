@@ -47,6 +47,19 @@
             android:layout_marginStart="30dp"
             android:text="Prev" />
 
+        <TextView
+            android:id="@+id/quiz_progress"
+            android:layout_width="148dp"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="118dp"
+            android:layout_marginRight="118dp"
+            android:layout_marginBottom="0dp"
+            android:text="TextView"
+            android:gravity="center" />
+
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
