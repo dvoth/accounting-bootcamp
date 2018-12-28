@@ -1,5 +1,6 @@
 package edu.siue.accountingbootcamp;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
@@ -167,6 +168,27 @@ public class MainActivity extends AppCompatActivity
             ft.add(R.id.quiz_list_container, fragment);
             ft.commit();
         }
+    }
+
+    public void displayQuiz(int quizId) {
+        Quiz quiz = quizList.get(quizId);
+
+
+        // get fragment manager
+        FragmentManager fm = getFragmentManager();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(QuizFragment.QUIZ_KEY, quiz);
+
+        // Add data to the new fragment
+        QuizFragment fragment = new QuizFragment();
+        fragment.setArguments(bundle);
+
+        // Add the new fragment on top of the previous
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.quiz_list_container, fragment);
+
+        // Add to back stack so we can press the back button to return to the QuizListFragment
+        ft.commit();
     }
 
     @Override

@@ -11,5 +11,7 @@
     <string name="score">Score:</string>
     <string name="textview">TextView</string>
     <string name="try_again">Try again</string>
+    <string name="next_quiz">Next Quiz</string>
+    <string name="a_score_of_70_or_above_is_required_to_move_to_the_next_quiz">A score of 70% or above is required to move to the next quiz</string>
     <string name="finish">Finish</string>
 </resources>

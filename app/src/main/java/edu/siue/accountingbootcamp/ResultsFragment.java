@@ -67,6 +67,7 @@ public class ResultsFragment extends Fragment {
         quizScore.append(" " + correctAnswers + "/" + totalAnswers + " (" + quiz.getPercentage() + "%)");
 
         Button tryAgain = getView().findViewById(R.id.try_again);
+        Button nextQuiz = getView().findViewById(R.id.next_quiz);
 
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +90,20 @@ public class ResultsFragment extends Fragment {
                 ft.commit();
             }
         });
+
+        if (quiz.getPercentage() >= 70) {
+            TextView scoreWarning = getView().findViewById(R.id.score_warning);
+            scoreWarning.setVisibility(View.INVISIBLE);
+            nextQuiz.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) getActivity()).displayQuiz(quiz.getQuizOrder());
+                }
+            });
+        } else {
+            nextQuiz.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override

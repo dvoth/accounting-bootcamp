@@ -169,7 +169,7 @@ public class QuizFragment extends Fragment {
         questionText.setText(question.getText());
 
         if (questionNumber == quiz.getLastQuestionIndex()) {
-            nextButton.setText("Finish");
+            nextButton.setText(R.string.finish);
         }
 
         // Create a table row for each available answer and add it to the necessary column
