@@ -33,6 +33,9 @@ public class Quiz extends ViewModel implements Parcelable {
     @Ignore
     private static final int PASS_PERCENTAGE = 70;
 
+    @Ignore
+    private boolean locked;
+
     /*
         GETTERS AND SETTERS
      */
@@ -76,6 +79,14 @@ public class Quiz extends ViewModel implements Parcelable {
         this.questionsFromApi = questionsFromApi;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     /*
         PARCELABLE INTERFACE METHODS
      */
@@ -93,6 +104,7 @@ public class Quiz extends ViewModel implements Parcelable {
     }
 
     public Quiz() {
+        locked = true;
     }
 
     public Quiz(Parcel in) {

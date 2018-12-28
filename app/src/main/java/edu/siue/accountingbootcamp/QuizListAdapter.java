@@ -97,7 +97,10 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         holder.tvPercentage.setBackground(percentageCircle);
         holder.tvPercentage.setText(Integer.toString(quiz.getPercentage()) + "%");
 
-        if (previousQuiz.getPercentage() >= previousQuiz.getPassPercentage() || position == 0 ) {
+        if (previousQuiz.getPercentage() >= previousQuiz.getPassPercentage() || position == 0 || !quiz.isLocked()) {
+            if (quiz.isLocked()) {
+                quiz.setLocked(false);
+            }
             holder.mView.setBackground(darkGreyBackground);
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
