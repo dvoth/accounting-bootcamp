@@ -27,6 +27,7 @@ import edu.siue.accountingbootcamp.utils.NetworkHelper;
 
 public class MainActivity extends AppCompatActivity
         implements QuizListFragment.OnListFragmentInteractionListener,
+                   ResultsFragment.OnFragmentInteractionListener,
                    QuizFragment.OnFragmentInteractionListener{
 
     private static final String JSON_URL =

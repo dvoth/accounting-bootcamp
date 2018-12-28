@@ -123,9 +123,19 @@ public class QuizFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
         clearTables();
-        displayQuestion();
+
+        Question lastQuestion = quiz.getQuestions().get(quiz.getQuestions().size() - 1);
+
+        if (lastQuestion.isAnswerAttempted()) {
+            displayResultsPage();
+        } else {
+            displayQuestion();
+        }
+    }
+
+    private void displayResultsPage() {
+
     }
 
     private void displayQuestion() {
