@@ -1,9 +1,13 @@
 package edu.siue.accountingbootcamp;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +43,7 @@ public class QuizFragment extends Fragment {
     public Quiz quiz;
     public Question question;
     public int questionNumber = 0;
+    private Context mContext;
     QuestionDAO mQuestionDao;
     TableLayout creditTable;
     TableLayout debitTable;
@@ -84,9 +89,12 @@ public class QuizFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Ensures fragments don't display over one another
+        if (container != null) {
+            container.removeAllViews();
+        }
 
         View view = inflater.inflate(R.layout.fragment_quiz, container, false);
-
         creditTable = view.findViewById(R.id.credit_table);
         debitTable = view.findViewById(R.id.debit_table);
         nextButton = view.findViewById(R.id.next_button);
@@ -98,10 +106,26 @@ public class QuizFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (questionNumber < quiz.getQuestions().size() - 1 && question.isAnswerAttempted()) {
+                if (questionNumber < quiz.getLastQuestionIndex() && question.isAnswerAttempted()) {
                     questionNumber++;
                     clearTables();
                     displayQuestion();
+                } else if (questionNumber == quiz.getLastQuestionIndex()) {
+                    // get fragment manager
+                    FragmentManager fm = ((Activity) mContext).getFragmentManager();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(ResultsFragment.RESULTS_KEY, quiz);
+
+                    // Add data to the new fragment
+                    ResultsFragment fragment = new ResultsFragment();
+                    fragment.setArguments(bundle);
+
+                    // Add the new fragment on top of the previous
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.quiz_list_container, fragment);
+
+                    // Add to back stack so we can press the back button to return to the QuizListFragment
+                    ft.commit();
                 }
             }
         });
@@ -123,13 +147,30 @@ public class QuizFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        clearTables();
 
-        displayQuestion();
+        Question lastQuestion = quiz.getQuestions().get(quiz.getLastQuestionIndex());
+
+        if (lastQuestion.isAnswerAttempted()) {
+            displayResultsPage();
+        } else {
+            displayQuestion();
+        }
+    }
+
+    private void displayResultsPage() {
+
     }
 
     private void displayQuestion() {
+        TextView quizProgress = getView().findViewById(R.id.quiz_progress);
+        quizProgress.setText(questionNumber + 1 + "/" + quiz.getQuestions().size());
         question = quiz.getQuestions().get(questionNumber);
         questionText.setText(question.getText());
+
+        if (questionNumber == quiz.getLastQuestionIndex()) {
+            nextButton.setText(R.string.finish);
+        }
 
         // Create a table row for each available answer and add it to the necessary column
         for (final Answer answer : question.getAnswers()) {
@@ -140,28 +181,55 @@ public class QuizFragment extends Fragment {
             b.setText(answer.getText());
             b.setBackgroundResource(R.drawable.btn_default_normal);
             b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getActivity(), answer.getIsanswer().toString(), Toast.LENGTH_SHORT).show();
-
-                    question.setAnswerAttempted(true);
-
-                    if (answer.getIsanswer()) {
-                        question.setAnsweredCorrectly(true);
-                        mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
-                        b.setBackgroundColor(Color.rgb(112, 43, 45));
-                    } else {
-                        b.setBackgroundColor(Color.RED);
-                    }
+            if (question.isAnswerAttempted()) {
+                if (question.isAnsweredCorrectly() && answer.getIsanswer()) {
+                    b.setBackgroundColor(Color.GREEN);
+                } else if (!question.isAnsweredCorrectly() && answer.isSelectedAnswer()){
+                    b.setBackgroundColor(Color.RED);
                 }
-            });
+            } else {
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        question.setAnswerAttempted(true);
+                        answer.setSelectedAnswer(true);
+
+                        if (answer.getIsanswer()) {
+                            question.setAnsweredCorrectly(true);
+                            mQuestionDao.updateAnsweredCorrectly(question.getId(), answer.getIsanswer());
+                            b.setBackgroundColor(Color.GREEN);
+                        } else {
+                            b.setBackgroundColor(Color.RED);
+                        }
+
+                        removeTableClickListeners(creditTable);
+                        removeTableClickListeners(debitTable);
+                    }
+                });
+            }
+
             tr.addView(b);
             String column = answer.getColumn();
             if (column.equals("dr")) {
                 debitTable.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
             } else {
                 creditTable.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            }
+        }
+    }
+
+    private void removeTableClickListeners(TableLayout table) {
+        for (int i=0; i < table.getChildCount(); i++) {
+            TableRow tr = (TableRow) table.getChildAt(i);
+            removeTableRowClickListeners(tr);
+        }
+    }
+
+    private void removeTableRowClickListeners(TableRow tr) {
+        for (int j=0; j < tr.getChildCount(); j++) {
+            if (tr.getChildAt(j).getClass().getSimpleName().equals("Button")) {
+                Button b = (Button) tr.getChildAt(j);
+                b.setOnClickListener(null);
             }
         }
     }
@@ -183,6 +251,7 @@ public class QuizFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

@@ -14,3 +14,9 @@ Instructions for using [Android Debug Database](https://github.com/amitshekharii
  * MainActivity.displayQuizList() creates a QuizListFragment object
  * The QuizListFragment object uses the QuizListAdapter to display all quizzes in a RecyclerView
  * Each Quiz object in the RecyclerView has an onClickListener() to create a new QuizFragment
+ 
+ ### Todo
+    * Change the quiz to only count the first guess as either right or wrong, then allow to move on
+        * Grey out other buttons and make them unclickable after first guess
+    * Add a "results" page after quiz finishes
+    * Add "View all quizzes" back button

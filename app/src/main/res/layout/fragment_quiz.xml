@@ -48,12 +48,18 @@
             android:text="Prev" />
 
         <TextView
-            android:id="@+id/score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/next_button"
-            android:layout_centerHorizontal="true"
-            android:text="TextView" />
+            android:id="@+id/quiz_progress"
+            android:layout_width="148dp"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="118dp"
+            android:layout_marginRight="118dp"
+            android:layout_marginBottom="0dp"
+            android:text="TextView"
+            android:gravity="center" />
+
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

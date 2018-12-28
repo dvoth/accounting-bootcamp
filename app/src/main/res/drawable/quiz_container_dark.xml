@@ -11,7 +11,7 @@
     <item android:bottom="1dp">
         <shape android:shape="rectangle"
             android:id="@+id/quizBackground">
-            <solid android:color="@color/accessible" />
+            <solid android:color="@color/inaccessible" />
         </shape>
     </item>
 
