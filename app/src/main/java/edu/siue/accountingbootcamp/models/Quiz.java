@@ -33,6 +33,12 @@ public class Quiz extends ViewModel implements Parcelable {
     @Ignore
     private static final int PASS_PERCENTAGE = 70;
 
+    @Ignore
+    private boolean locked;
+
+    @Ignore
+    private int lastQuestionIndex;
+
     /*
         GETTERS AND SETTERS
      */
@@ -64,8 +70,9 @@ public class Quiz extends ViewModel implements Parcelable {
         return questions.getValue();
     }
 
-    public void setQuestions(List<Question> questionse) {
-        this.questions.postValue(questionse);
+    public void setQuestions(List<Question> questions) {
+        this.questions.postValue(questions);
+        lastQuestionIndex = questions.size() - 1;
     }
 
     public List<Question> getQuestionsFromApi() {
@@ -74,6 +81,22 @@ public class Quiz extends ViewModel implements Parcelable {
 
     public void setQuestionsFromApi(List<Question> questionsFromApi) {
         this.questionsFromApi = questionsFromApi;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public int getLastQuestionIndex() {
+        return lastQuestionIndex;
+    }
+
+    public void setLastQuestionIndex(int lastQuestionIndex) {
+        this.lastQuestionIndex = lastQuestionIndex;
     }
 
     /*
@@ -93,6 +116,7 @@ public class Quiz extends ViewModel implements Parcelable {
     }
 
     public Quiz() {
+        locked = true;
     }
 
     public Quiz(Parcel in) {
@@ -152,5 +176,12 @@ public class Quiz extends ViewModel implements Parcelable {
 
         // If all questions were attempted, return the last question
         return questionNumber;
+    }
+
+    public void reset() {
+        for (Question question : getQuestions()) {
+            question.setAnswerAttempted(false);
+            question.setAnsweredCorrectly(false);
+        }
     }
 }

@@ -2,8 +2,9 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#b71c1c</color>
     <color name="dark_grey_border">#8e8e8e</color>
-    <color name="background">#cecece</color>
-    <color name="inaccessible">#e0e0e0</color>
+    <color name="background">#f3f3f3</color>
+    <color name="inaccessible">#d7d8da</color>
+    <color name="accessible">#afb2b7</color>
 </resources>

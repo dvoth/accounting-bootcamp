@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".ResultsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/quiz_name"
+        android:layout_width="384dp"
+        android:layout_height="144dp"
+        android:gravity="center"
+        android:text="@string/results_for"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+    <TextView
+        android:id="@+id/quiz_score"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/score"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+    <TextView
+        android:id="@+id/score_warning"
+        android:layout_width="276dp"
+        android:layout_height="63dp"
+        android:gravity="center"
+        android:text="@string/a_score_of_70_or_above_is_required_to_move_to_the_next_quiz"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/colorAccent" />
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/try_again"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:text="@string/try_again" />
+
+        <Button
+            android:id="@+id/next_quiz"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:text="@string/next_quiz" />
+
+    </LinearLayout>
+
+</LinearLayout>

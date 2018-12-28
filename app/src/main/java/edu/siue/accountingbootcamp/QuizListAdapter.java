@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,11 +20,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
+import edu.siue.accountingbootcamp.models.Question;
 import edu.siue.accountingbootcamp.models.Quiz;
 import edu.siue.accountingbootcamp.models.QuizDAO;
 
@@ -80,6 +79,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         ColorFilter grey = new LightingColorFilter( Color.GRAY, Color.GRAY);
 
         Drawable lightGreyBackground = ContextCompat.getDrawable(mContext, R.drawable.quiz_container_light);
+        Drawable darkGreyBackground = ContextCompat.getDrawable(mContext, R.drawable.quiz_container_dark);
         Drawable percentageCircle = ContextCompat.getDrawable(mContext, R.drawable.circle);
 
         percentageCircle.setColorFilter(red);
@@ -97,31 +97,64 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         holder.tvPercentage.setBackground(percentageCircle);
         holder.tvPercentage.setText(Integer.toString(quiz.getPercentage()) + "%");
 
-        if (previousQuiz.getPercentage() >= previousQuiz.getPassPercentage() || position == 0 ) {
+        if (previousQuiz.getPercentage() >= previousQuiz.getPassPercentage() || position == 0 || !quiz.isLocked()) {
+            if (quiz.isLocked()) {
+                quiz.setLocked(false);
+            }
+            holder.mView.setBackground(darkGreyBackground);
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // get fragment manager
-                    FragmentManager fm = ((Activity) mContext).getFragmentManager();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(QuizFragment.QUIZ_KEY, quiz);
+                    Question lastQuestion = quiz.getQuestions().get(quiz.getLastQuestionIndex());
 
-                    // Add data to the new fragment
-                    QuizFragment fragment = new QuizFragment();
-                    fragment.setArguments(bundle);
-
-                    // Add the new fragment on top of the previous
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.quiz_list_container, fragment);
-
-                    // Add to back stack so we can press the back button to return to the QuizListFragment
-                    ft.addToBackStack(null);
-                    ft.commit();
+                    if (lastQuestion.isAnswerAttempted()) {
+                        createResultsFragment(quiz);
+                    } else {
+                        createQuizFragment(quiz);
+                    }
                 }
             });
         } else {
             holder.mView.setBackground(lightGreyBackground);
         }
+    }
+
+    private void createQuizFragment(Quiz quiz) {
+        // get fragment manager
+        FragmentManager fm = ((Activity) mContext).getFragmentManager();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(QuizFragment.QUIZ_KEY, quiz);
+
+        // Add data to the new fragment
+        QuizFragment fragment = new QuizFragment();
+        fragment.setArguments(bundle);
+
+        // Add the new fragment on top of the previous
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.quiz_list_container, fragment);
+
+        // Add to back stack so we can press the back button to return to the QuizListFragment
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    private void createResultsFragment(Quiz quiz) {
+        // get fragment manager
+        FragmentManager fm = ((Activity) mContext).getFragmentManager();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ResultsFragment.RESULTS_KEY, quiz);
+
+        // Add data to the new fragment
+        ResultsFragment fragment = new ResultsFragment();
+        fragment.setArguments(bundle);
+
+        // Add the new fragment on top of the previous
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.quiz_list_container, fragment);
+
+        // Add to back stack so we can press the back button to return to the QuizListFragment
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     public int getItemCount() {

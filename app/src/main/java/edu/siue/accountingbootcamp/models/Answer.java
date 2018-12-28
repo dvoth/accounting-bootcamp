@@ -2,6 +2,7 @@ package edu.siue.accountingbootcamp.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -27,6 +28,9 @@ public class Answer implements Parcelable {
     private int questionId;
     private String text;
     private Boolean isanswer;
+    private Boolean selectedAnswer;
+
+    @Ignore
     private String column;
 
     /*
@@ -80,6 +84,15 @@ public class Answer implements Parcelable {
         this.questionId = questionId;
     }
 
+
+    public Boolean isSelectedAnswer() {
+        return selectedAnswer;
+    }
+
+    public void setSelectedAnswer(Boolean selectedAnswer) {
+        this.selectedAnswer = selectedAnswer;
+    }
+
     /*
         PARCELABLE INTERFACE METHODS
      */
@@ -98,6 +111,7 @@ public class Answer implements Parcelable {
     }
 
     public Answer() {
+        selectedAnswer = false;
     }
 
     protected Answer(Parcel in) {
