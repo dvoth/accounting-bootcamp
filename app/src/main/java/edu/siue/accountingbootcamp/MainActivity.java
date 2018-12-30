@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.siue.accountingbootcamp.models.Answer;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity
             "https://abootcamp.isg.siue.edu/api/all.php";
 
     List<Quiz> quizList;
+    HashMap<Integer, Quiz> quizHashMap = new HashMap<>();
     AppDatabase db;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -47,6 +50,9 @@ public class MainActivity extends AppCompatActivity
             // Receives the parcelable quizzes from ApiService.java
             Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(ApiService.MY_SERVICE_PAYLOAD);
             quizList = new ArrayList<>(Arrays.asList(quizzes));
+            for (Quiz quiz : quizList) {
+                quizHashMap.put(quiz.getId(), quiz);
+            }
 
             loadOnDevice();
             displayQuizList();
@@ -106,23 +112,35 @@ public class MainActivity extends AppCompatActivity
         QuestionDAO mQuestionDao = db.questionDAO();
         AnswerDAO mAnswerDao = db.answerDAO();
 
+        List<Quiz> currentQuizzes = mQuizDao.getAll();
+
         // Keeps track of the list of questions for each quiz
         List<Question> quizQuestions;
         // Keeps track of the list of answers for each question
         List<Answer> questionAnswers;
 
         // Master list of all quizzes, questions, and answers from api
-        List<Quiz> allQuizzes = new ArrayList<>();
+        List<Quiz> quizzesToUpdate = new ArrayList<>();
         List<Question> allQuestions = new ArrayList<>();
         List<Answer> allAnswers = new ArrayList<>();
 
-        for (Quiz quiz : quizList) {
-            allQuizzes.add(quiz);
-            quizQuestions = quiz.getQuestions();
+        for (Quiz quizFromAPI : quizList) {
+            Quiz quizFromDB = quizHashMap.get(quizFromAPI.getId());
+
+            // If the quiz was updated on the server, update the database data to store later
+            if (quizFromDB != null && !quizFromDB.equals(quizFromAPI)) {
+                quizFromDB.setName(quizFromAPI.getName());
+                quizFromDB.setQuizOrder(quizFromAPI.getQuizOrder());
+                quizzesToUpdate.add(quizFromAPI);
+            } else {
+                quizzesToUpdate.add(quizFromAPI);
+            }
+
+            quizQuestions = quizFromAPI.getQuestions();
 
             for (Question question : quizQuestions) {
                 // Manually add correct foreign key ids (Room doesn't do this automatically)
-                question.setQuizId(quiz.getId());
+                question.setQuizId(quizFromAPI.getId());
                 questionAnswers = question.getAnswers();
 
                 // Add question with updated foreign keys to master list
@@ -130,7 +148,7 @@ public class MainActivity extends AppCompatActivity
 
                 for (Answer answer : questionAnswers) {
                     // Manually add correct foreign key ids (Room doesn't do this automatically)
-                    answer.setQuizId(quiz.getId());
+                    answer.setQuizId(quizFromAPI.getId());
                     answer.setQuestionId(question.getId());
 
                     // Add answer with updated foreign keys to master list
@@ -140,7 +158,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Insert all quizzes, questions, and answers in one fell swoop outside of the loops (reduces query load)
-        mQuizDao.insertAll(allQuizzes);
+        mQuizDao.insertAll(quizzesToUpdate);
         mQuestionDao.insertAll(allQuestions);
         mAnswerDao.insertAll(allAnswers);
     }

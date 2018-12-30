@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -186,7 +185,11 @@ public class Quiz extends ViewModel implements Parcelable {
 
         AppDatabase db;
         QuestionDAO mQuestionDao;
+        QuizDAO mQuizDao;
         db = AppDatabase.getAppDatabase(activity);
+        mQuizDao = db.quizDAO();
+        mQuizDao.updateLocked(getId(), true);
+
 
         for (Question question : getQuestions()) {
             mQuestionDao = db.questionDAO();
@@ -196,5 +199,10 @@ public class Quiz extends ViewModel implements Parcelable {
             question.setAnswerAttempted(false);
             question.setAnsweredCorrectly(false);
         }
+    }
+
+    public boolean equals(Quiz quiz) {
+        return quiz.getName().equals(getName())
+                && quiz.getQuizOrder() == getQuizOrder();
     }
 }
