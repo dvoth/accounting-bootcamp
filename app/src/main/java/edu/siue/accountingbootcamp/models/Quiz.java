@@ -1,16 +1,20 @@
 package edu.siue.accountingbootcamp.models;
 
+import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import edu.siue.accountingbootcamp.AppDatabase;
 
 @Entity(tableName = "quizzes")
 public class Quiz extends ViewModel implements Parcelable {
@@ -19,6 +23,7 @@ public class Quiz extends ViewModel implements Parcelable {
     private int id;
     private String name;
     private int quizOrder;
+    private boolean locked;
 
     // Serialized name to put results of questions from the API to this List field so we can later send to MutableLiveData object
     @Ignore
@@ -32,9 +37,6 @@ public class Quiz extends ViewModel implements Parcelable {
 
     @Ignore
     private static final int PASS_PERCENTAGE = 70;
-
-    @Ignore
-    private boolean locked;
 
     @Ignore
     private int lastQuestionIndex;
@@ -113,6 +115,7 @@ public class Quiz extends ViewModel implements Parcelable {
         dest.writeString(this.name);
         dest.writeInt(this.quizOrder);
         dest.writeList(this.questions.getValue());
+        dest.writeInt((this.locked ? 1 : 0));
     }
 
     public Quiz() {
@@ -124,6 +127,7 @@ public class Quiz extends ViewModel implements Parcelable {
         this.name = in.readString();
         this.quizOrder = in.readInt();
         in.readValue(Question.class.getClassLoader());
+        this.locked = (in.readInt() == 0) ? false : true;
     }
 
     public static final Parcelable.Creator<Quiz> CREATOR = new Parcelable.Creator<Quiz>() {
@@ -165,11 +169,11 @@ public class Quiz extends ViewModel implements Parcelable {
 
     public int getCurrentQuestion() {
         // Initialize to the last question to return if the entire quiz is completed
-        int questionNumber = questionsFromApi.size() - 1;
+        int questionNumber = getQuestions().size() - 1;
 
         // Return the first question that isn't attempted
-        for (int i=0; i<questionsFromApi.size() - 1; i++) {
-            if (!questionsFromApi.get(i).isAnswerAttempted()) {
+        for (int i=0; i<getQuestions().size() - 1; i++) {
+            if (!getQuestions().get(i).isAnswerAttempted()) {
                 return i;
             }
         }
@@ -178,8 +182,17 @@ public class Quiz extends ViewModel implements Parcelable {
         return questionNumber;
     }
 
-    public void reset() {
+    public void reset(Activity activity) {
+
+        AppDatabase db;
+        QuestionDAO mQuestionDao;
+        db = AppDatabase.getAppDatabase(activity);
+
         for (Question question : getQuestions()) {
+            mQuestionDao = db.questionDAO();
+
+            mQuestionDao.updateAnswerAttempted(question.getId(), false);
+            mQuestionDao.updateAnsweredCorrectly(question.getId(), false);
             question.setAnswerAttempted(false);
             question.setAnsweredCorrectly(false);
         }

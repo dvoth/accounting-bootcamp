@@ -14,4 +14,5 @@
     <string name="next_quiz">Next Quiz</string>
     <string name="a_score_of_70_or_above_is_required_to_move_to_the_next_quiz">A score of 70% or above is required to move to the next quiz</string>
     <string name="finish">Finish</string>
+    <string name="no_quizzes_available">No quizzes available</string>
 </resources>

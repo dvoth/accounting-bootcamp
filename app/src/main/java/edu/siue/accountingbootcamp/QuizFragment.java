@@ -193,6 +193,7 @@ public class QuizFragment extends Fragment {
                     public void onClick(View view) {
                         question.setAnswerAttempted(true);
                         answer.setSelectedAnswer(true);
+                        mQuestionDao.updateAnswerAttempted(question.getId(), true);
 
                         if (answer.getIsanswer()) {
                             question.setAnsweredCorrectly(true);

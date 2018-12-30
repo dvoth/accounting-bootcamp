@@ -72,7 +72,7 @@ public class ResultsFragment extends Fragment {
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quiz.reset();
+                quiz.reset(getActivity());
 
                 // get fragment manager
                 FragmentManager fm = ((Activity) mContext).getFragmentManager();

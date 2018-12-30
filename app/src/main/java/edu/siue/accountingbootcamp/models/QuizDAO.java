@@ -17,4 +17,7 @@ public interface QuizDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Quiz> Quizzes);
+
+    @Query("UPDATE quizzes SET locked = :locked WHERE id = :id")
+    void updateLocked(int id, boolean locked);
 }

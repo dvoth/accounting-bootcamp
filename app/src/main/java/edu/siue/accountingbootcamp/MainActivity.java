@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -58,20 +61,40 @@ public class MainActivity extends AppCompatActivity
         boolean networkOk = NetworkHelper.hasNetworkAccess(this);
 
         if (networkOk) {
-            Toast.makeText(this, "Network working", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, ApiService.class);
             intent.setData(Uri.parse(JSON_URL));
             startService(intent);
         } else {
-            Toast.makeText(this, "Network issue", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Could not connect to the Internet", Toast.LENGTH_LONG).show();
             quizList = loadFromDevice();
-            displayQuizList();
-        }
 
+            if (quizList.isEmpty()) {
+                displayQuizLoadError();
+            } else {
+                displayQuizList();
+            }
+        }
 
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .registerReceiver(mBroadcastReceiver,
                         new IntentFilter(ApiService.MY_SERVICE_MESSAGE));
+    }
+
+    private void displayQuizLoadError() {
+        Button tryAgain = findViewById(R.id.try_loading_again);
+
+        findViewById(R.id.no_quizzes).setVisibility(View.VISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
+
+        // Refreshes activity 
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
     }
 
     /**
@@ -172,7 +195,6 @@ public class MainActivity extends AppCompatActivity
 
     public void displayQuiz(int quizId) {
         Quiz quiz = quizList.get(quizId);
-
 
         // get fragment manager
         FragmentManager fm = getFragmentManager();
