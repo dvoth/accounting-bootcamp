@@ -18,3 +18,8 @@ Instructions for using [Android Debug Database](https://github.com/amitshekharii
 ### Todo
  * Find solution to keeping mobile database integrity when the api updates
  * Find solution to persisting database on reload (and make sure api doesn't always override current database)
+    * Keep a separate list of objects that are different 
+    * Keep a separate list of objects that need deleted
+        * if quizhashmap contains an id not in the api, add to list that needs deleted
+    * Delete and update outside of loop structure
+    * Update can probably be done by inserting and replacing on conflict
