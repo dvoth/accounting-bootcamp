@@ -1,6 +1,5 @@
 package edu.siue.accountingbootcamp;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
@@ -11,10 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     private static final String JSON_URL =
             "https://abootcamp.isg.siue.edu/api/all.php";
 
-    List<Quiz> quizList;
+    List<Quiz> quizzesFromAPI;
     HashMap<Integer, Quiz> quizHashMap = new HashMap<>();
     HashMap<Integer, Question> questionHashMap = new HashMap<>();
     HashMap<Integer, Answer> answerHashMap = new HashMap<>();
@@ -51,7 +48,7 @@ public class MainActivity extends AppCompatActivity
 
             // Receives the parcelable quizzes from ApiService.java
             Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(ApiService.MY_SERVICE_PAYLOAD);
-            quizList = new ArrayList<>(Arrays.asList(quizzes));
+            quizzesFromAPI = new ArrayList<>(Arrays.asList(quizzes));
 
             loadOnDevice();
             displayQuizList();
@@ -72,9 +69,8 @@ public class MainActivity extends AppCompatActivity
             startService(intent);
         } else {
             Toast.makeText(this, "Could not connect to the Internet", Toast.LENGTH_LONG).show();
-            quizList = loadFromDevice();
 
-            if (quizList.isEmpty()) {
+            if (quizHashMap.isEmpty()) {
                 displayQuizLoadError();
             } else {
                 displayQuizList();
@@ -132,7 +128,7 @@ public class MainActivity extends AppCompatActivity
         List<Question> allQuestions = new ArrayList<>();
         List<Answer> allAnswers = new ArrayList<>();
 
-        for (Quiz quizFromAPI : quizList) {
+        for (Quiz quizFromAPI : quizzesFromAPI) {
             Quiz quizFromDB = quizHashMap.get(quizFromAPI.getId());
             Quiz updatedQuiz = updateQuizHashMap(quizFromDB, quizFromAPI);
             quizQuestions = updatedQuiz.getQuestions();
@@ -211,34 +207,6 @@ public class MainActivity extends AppCompatActivity
         return answerFromDB;
     }
 
-    /**
-     * If there is a network problem and we can't contact the api, load the quizzes from the device's database
-     */
-    private List <Quiz> loadFromDevice() {
-        QuizDAO mQuizDao = db.quizDAO();
-        QuestionDAO mQuestionDao = db.questionDAO();
-        AnswerDAO mAnswerDao = db.answerDAO();
-        List<Quiz> quizzes = mQuizDao.getAll();
-
-        for (Quiz quiz : quizzes) {
-            // Gets questions associated with quiz
-            List<Question> questions;
-            questions = mQuestionDao.getAll(quiz.getId());
-
-            for (Question question: questions) {
-                // Gets questions associated with quiz
-                List<Answer> answers;
-                answers = mAnswerDao.getAll(quiz.getId(), question.getId());
-
-                question.setAnswers(answers);
-            }
-
-            quiz.setQuestions(questions);
-        }
-        
-        return quizzes;
-    }
-    
     private void displayQuizLoadError() {
         Button tryAgain = findViewById(R.id.try_loading_again);
 
