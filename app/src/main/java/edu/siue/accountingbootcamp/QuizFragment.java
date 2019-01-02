@@ -111,21 +111,7 @@ public class QuizFragment extends Fragment {
                     clearTables();
                     displayQuestion();
                 } else if (questionNumber == quiz.getLastQuestionIndex()) {
-                    // get fragment manager
-                    FragmentManager fm = ((Activity) mContext).getFragmentManager();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(ResultsFragment.RESULTS_KEY, quiz);
-
-                    // Add data to the new fragment
-                    ResultsFragment fragment = new ResultsFragment();
-                    fragment.setArguments(bundle);
-
-                    // Add the new fragment on top of the previous
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.quiz_list_container, fragment);
-
-                    // Add to back stack so we can press the back button to return to the QuizListFragment
-                    ft.commit();
+                    displayResultsPage();
                 }
             }
         });
@@ -159,7 +145,19 @@ public class QuizFragment extends Fragment {
     }
 
     private void displayResultsPage() {
+        // get fragment manager
+        FragmentManager fm = ((Activity) mContext).getFragmentManager();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ResultsFragment.RESULTS_KEY, quiz);
 
+        // Add data to the new fragment
+        ResultsFragment fragment = new ResultsFragment();
+        fragment.setArguments(bundle);
+
+        // Add the new fragment on top of the previous
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.quiz_list_container, fragment);
+        ft.commit();
     }
 
     private void displayQuestion() {
@@ -193,6 +191,7 @@ public class QuizFragment extends Fragment {
                     public void onClick(View view) {
                         question.setAnswerAttempted(true);
                         answer.setSelectedAnswer(true);
+                        mQuestionDao.updateAnswerAttempted(question.getId(), true);
 
                         if (answer.getIsanswer()) {
                             question.setAnsweredCorrectly(true);

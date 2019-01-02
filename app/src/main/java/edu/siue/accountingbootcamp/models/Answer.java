@@ -29,8 +29,6 @@ public class Answer implements Parcelable {
     private String text;
     private Boolean isanswer;
     private Boolean selectedAnswer;
-
-    @Ignore
     private String column;
 
     /*

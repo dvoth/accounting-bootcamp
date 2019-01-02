@@ -25,6 +25,26 @@
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/no_quizzes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/no_quizzes_available"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/try_loading_again"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/no_quizzes"
+            android:layout_centerHorizontal="true"
+            android:text="@string/try_again"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:visibility="invisible"/>
+
     </RelativeLayout>
 
     <!-- The navigation drawer -->

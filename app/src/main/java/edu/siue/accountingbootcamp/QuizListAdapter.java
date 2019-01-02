@@ -100,6 +100,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.ViewHo
         if (previousQuiz.getPercentage() >= previousQuiz.getPassPercentage() || position == 0 || !quiz.isLocked()) {
             if (quiz.isLocked()) {
                 quiz.setLocked(false);
+                mQuizDao.updateLocked(quiz.getId(), false);
             }
             holder.mView.setBackground(darkGreyBackground);
             holder.mView.setOnClickListener(new View.OnClickListener() {

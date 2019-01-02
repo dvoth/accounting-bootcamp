@@ -20,4 +20,7 @@ public interface QuestionDAO {
 
     @Query("UPDATE questions SET answeredCorrectly = :answeredCorrectly WHERE id = :id")
     void updateAnsweredCorrectly(int id, boolean answeredCorrectly);
+
+    @Query("UPDATE questions SET answerAttempted = :answerAttempted WHERE id = :id")
+    void updateAnswerAttempted(int id, boolean answerAttempted);
 }
