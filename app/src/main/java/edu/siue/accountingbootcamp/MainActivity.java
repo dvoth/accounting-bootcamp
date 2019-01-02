@@ -113,23 +113,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void displayQuizLoadError() {
-        Button tryAgain = findViewById(R.id.try_loading_again);
-
-        findViewById(R.id.no_quizzes).setVisibility(View.VISIBLE);
-        tryAgain.setVisibility(View.VISIBLE);
-
-        // Refreshes activity 
-        tryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                startActivity(getIntent());
-            }
-        });
-
-    }
-
     /**
      * Loops through the quizzes from the api and stores the quizzes, questions, and answers to the device's database
      */
@@ -254,6 +237,23 @@ public class MainActivity extends AppCompatActivity
         }
         
         return quizzes;
+    }
+    
+    private void displayQuizLoadError() {
+        Button tryAgain = findViewById(R.id.try_loading_again);
+
+        findViewById(R.id.no_quizzes).setVisibility(View.VISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
+
+        // Refreshes activity
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
     }
 
     private void displayQuizList() {
