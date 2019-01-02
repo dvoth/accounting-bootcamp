@@ -12,6 +12,10 @@ public interface AnswerDAO {
     @Query("SELECT * FROM answers WHERE quizId = :quizId AND questionId = :questionId")
     List<Answer> getAll(int quizId, int questionId);
 
+
+    @Query("SELECT * FROM answers WHERE id = :id")
+    Answer getAnswer(int id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Answer... answers);
 

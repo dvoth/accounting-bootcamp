@@ -1,6 +1,5 @@
 package edu.siue.accountingbootcamp;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
@@ -11,10 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.siue.accountingbootcamp.models.Answer;
@@ -34,7 +36,10 @@ public class MainActivity extends AppCompatActivity
     private static final String JSON_URL =
             "https://abootcamp.isg.siue.edu/api/all.php";
 
-    List<Quiz> quizList;
+    List<Quiz> quizzesFromAPI;
+    HashMap<Integer, Quiz> quizHashMap = new HashMap<>();
+    HashMap<Integer, Question> questionHashMap = new HashMap<>();
+    HashMap<Integer, Answer> answerHashMap = new HashMap<>();
     AppDatabase db;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -43,7 +48,7 @@ public class MainActivity extends AppCompatActivity
 
             // Receives the parcelable quizzes from ApiService.java
             Quiz[] quizzes = (Quiz[]) intent.getParcelableArrayExtra(ApiService.MY_SERVICE_PAYLOAD);
-            quizList = new ArrayList<>(Arrays.asList(quizzes));
+            quizzesFromAPI = new ArrayList<>(Arrays.asList(quizzes));
 
             loadOnDevice();
             displayQuizList();
@@ -56,22 +61,52 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         db = AppDatabase.getAppDatabase(this);
         boolean networkOk = NetworkHelper.hasNetworkAccess(this);
+        loadHashMaps();
 
         if (networkOk) {
-            Toast.makeText(this, "Network working", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, ApiService.class);
             intent.setData(Uri.parse(JSON_URL));
             startService(intent);
         } else {
-            Toast.makeText(this, "Network issue", Toast.LENGTH_LONG).show();
-            quizList = loadFromDevice();
-            displayQuizList();
-        }
+            Toast.makeText(this, "Could not connect to the Internet", Toast.LENGTH_LONG).show();
 
+            if (quizHashMap.isEmpty()) {
+                displayQuizLoadError();
+            } else {
+                displayQuizList();
+            }
+        }
 
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .registerReceiver(mBroadcastReceiver,
                         new IntentFilter(ApiService.MY_SERVICE_MESSAGE));
+    }
+
+    private void loadHashMaps() {
+        QuizDAO quizDAO = db.quizDAO();
+        QuestionDAO questionDAO = db.questionDAO();
+        AnswerDAO answerDAO = db.answerDAO();
+        List<Quiz> quizzes = quizDAO.getAll();
+        List<Question> questions;
+        List<Answer> answers;
+
+        for (Quiz quiz : quizzes ){
+            questions = questionDAO.getAll(quiz.getId());
+
+            for (Question question : questions) {
+                answers = answerDAO.getAll(quiz.getId(), question.getId());
+
+                for (Answer answer : answers) {
+                    answerHashMap.put(answer.getId(), answer);
+                }
+
+                question.setAnswers(answers);
+                questionHashMap.put(question.getId(), question);
+            }
+            quiz.setQuestions(questions);
+            quizHashMap.put(quiz.getId(), quiz);
+        }
+
     }
 
     /**
@@ -93,25 +128,33 @@ public class MainActivity extends AppCompatActivity
         List<Question> allQuestions = new ArrayList<>();
         List<Answer> allAnswers = new ArrayList<>();
 
-        for (Quiz quiz : quizList) {
-            allQuizzes.add(quiz);
-            quizQuestions = quiz.getQuestions();
+        for (Quiz quizFromAPI : quizzesFromAPI) {
+            Quiz quizFromDB = quizHashMap.get(quizFromAPI.getId());
+            Quiz updatedQuiz = updateQuizHashMap(quizFromDB, quizFromAPI);
+            quizQuestions = updatedQuiz.getQuestions();
+            allQuizzes.add(updatedQuiz);
 
-            for (Question question : quizQuestions) {
+            for (Question questionFromAPI : quizQuestions) {
+                Question questionFromDB = questionHashMap.get(questionFromAPI.getId());
+                Question updatedQuestion = updateQuestionHashMap(questionFromDB, questionFromAPI);
+
                 // Manually add correct foreign key ids (Room doesn't do this automatically)
-                question.setQuizId(quiz.getId());
-                questionAnswers = question.getAnswers();
+                updatedQuestion.setQuizId(updatedQuiz.getId());
+                questionAnswers = updatedQuestion.getAnswers();
 
                 // Add question with updated foreign keys to master list
-                allQuestions.add(question);
+                allQuestions.add(updatedQuestion);
 
-                for (Answer answer : questionAnswers) {
+                for (Answer answerFromAPI : questionAnswers) {
+                    Answer answerFromDB = answerHashMap.get(answerFromAPI.getId());
+                    Answer updatedAnswer = updateAnswerHashMap(answerFromDB, answerFromAPI);
+
                     // Manually add correct foreign key ids (Room doesn't do this automatically)
-                    answer.setQuizId(quiz.getId());
-                    answer.setQuestionId(question.getId());
+                    answerFromAPI.setQuizId(updatedQuiz.getId());
+                    answerFromAPI.setQuestionId(updatedQuestion.getId());
 
                     // Add answer with updated foreign keys to master list
-                    allAnswers.add(answer);
+                    allAnswers.add(updatedAnswer);
                 }
             }
         }
@@ -122,41 +165,72 @@ public class MainActivity extends AppCompatActivity
         mAnswerDao.insertAll(allAnswers);
     }
 
-    /**
-     * If there is a network problem and we can't contact the api, load the quizzes from the device's database
-     */
-    private List <Quiz> loadFromDevice() {
-        QuizDAO mQuizDao = db.quizDAO();
-        QuestionDAO mQuestionDao = db.questionDAO();
-        AnswerDAO mAnswerDao = db.answerDAO();
-        List<Quiz> quizzes = mQuizDao.getAll();
-
-        for (Quiz quiz : quizzes) {
-            // Gets questions associated with quiz
-            List<Question> questions;
-            questions = mQuestionDao.getAll(quiz.getId());
-
-            for (Question question: questions) {
-                // Gets questions associated with quiz
-                List<Answer> answers;
-                answers = mAnswerDao.getAll(quiz.getId(), question.getId());
-
-                question.setAnswers(answers);
-            }
-
-            quiz.setQuestions(questions);
+    private Quiz updateQuizHashMap(Quiz quizFromDB, Quiz quizFromAPI) {
+        // If the quiz was updated on the server, update the database data to store later
+        if (quizFromDB != null) {
+            quizFromDB.setName(quizFromAPI.getName());
+            quizFromDB.setQuizOrder(quizFromAPI.getQuizOrder());
+            quizHashMap.put(quizFromAPI.getId(), quizFromDB);
+        } else {
+            quizFromDB = quizFromAPI;
+            quizHashMap.put(quizFromAPI.getId(), quizFromAPI);
         }
-        
-        return quizzes;
+
+        return quizFromDB;
+    }
+
+    private Question updateQuestionHashMap(Question questionFromDB, Question questionFromAPI) {
+        // If the quiz was updated on the server, update the database data to store later
+        if (questionFromDB != null) {
+            questionFromDB.setText(questionFromAPI.getText());
+            questionHashMap.put(questionFromAPI.getId(), questionFromDB);
+        } else {
+            questionFromDB = questionFromAPI;
+            questionHashMap.put(questionFromAPI.getId(), questionFromAPI);
+        }
+
+        return questionFromDB;
+    }
+
+    private Answer updateAnswerHashMap(Answer answerFromDB, Answer answerFromAPI) {
+        // If the quiz was updated on the server, update the database data to store later
+        if (answerFromDB != null) {
+            answerFromDB.setText(answerFromAPI.getText());
+            answerFromDB.setIsanswer(answerFromAPI.getIsanswer());
+            answerFromDB.setColumn(answerFromAPI.getColumn());
+            answerHashMap.put(answerFromAPI.getId(), answerFromDB);
+        } else {
+            answerFromDB = answerFromAPI;
+            answerHashMap.put(answerFromAPI.getId(), answerFromAPI);
+        }
+
+        return answerFromDB;
+    }
+
+    private void displayQuizLoadError() {
+        Button tryAgain = findViewById(R.id.try_loading_again);
+
+        findViewById(R.id.no_quizzes).setVisibility(View.VISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
+
+        // Refreshes activity
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
     }
 
     private void displayQuizList() {
-        if (quizList != null) {
+        if (quizHashMap != null) {
             FragmentManager fm = getFragmentManager();
             Bundle bundle = new Bundle();
 
             // Convert quiz to array to make it easier to pass to the QuizListFragment
-            Quiz[] quizArray = quizList.toArray(new Quiz[quizList.size()]);
+            Quiz[] quizArray = quizHashMap.values().toArray(new Quiz[quizHashMap.values().size()]);
             bundle.putParcelableArray(QuizListFragment.QUIZ_LIST, quizArray);
 
             // Add data to the new fragment
@@ -170,14 +244,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void displayQuiz(int quizId) {
-        Quiz quiz = quizList.get(quizId);
+    public void displayQuiz(int quizOrder) {
+        Quiz nextQuiz = null;
+        for (Quiz quiz : quizHashMap.values()) {
+            if (quiz.getQuizOrder() == quizOrder)
+                nextQuiz = quiz;
+        }
 
+        if (nextQuiz == null)
+            nextQuiz = new Quiz();
 
         // get fragment manager
         FragmentManager fm = getFragmentManager();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(QuizFragment.QUIZ_KEY, quiz);
+        bundle.putParcelable(QuizFragment.QUIZ_KEY, nextQuiz);
 
         // Add data to the new fragment
         QuizFragment fragment = new QuizFragment();

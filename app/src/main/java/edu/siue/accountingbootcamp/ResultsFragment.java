@@ -72,7 +72,7 @@ public class ResultsFragment extends Fragment {
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quiz.reset();
+                quiz.reset(getActivity());
 
                 // get fragment manager
                 FragmentManager fm = ((Activity) mContext).getFragmentManager();
@@ -97,7 +97,7 @@ public class ResultsFragment extends Fragment {
             nextQuiz.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity) getActivity()).displayQuiz(quiz.getQuizOrder());
+                    ((MainActivity) getActivity()).displayQuiz(quiz.getQuizOrder() + 1);
                 }
             });
         } else {
