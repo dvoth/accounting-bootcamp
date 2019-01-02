@@ -200,9 +200,4 @@ public class Quiz extends ViewModel implements Parcelable {
             question.setAnsweredCorrectly(false);
         }
     }
-
-    public boolean equals(Quiz quiz) {
-        return quiz.getName().equals(getName())
-                && quiz.getQuizOrder() == getQuizOrder();
-    }
 }

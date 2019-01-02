@@ -97,7 +97,7 @@ public class ResultsFragment extends Fragment {
             nextQuiz.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity) getActivity()).displayQuiz(quiz.getQuizOrder());
+                    ((MainActivity) getActivity()).displayQuiz(quiz.getQuizOrder() + 1);
                 }
             });
         } else {
