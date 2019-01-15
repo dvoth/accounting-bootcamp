@@ -19,6 +19,8 @@ import android.widget.Toast;
 import android.graphics.Color;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import edu.siue.accountingbootcamp.models.Answer;
@@ -134,6 +136,10 @@ public class QuizFragment extends Fragment {
     public void onStart() {
         super.onStart();
         clearTables();
+
+        if (!quiz.started()) {
+            Collections.shuffle(quiz.getQuestions());
+        }
 
         Question lastQuestion = quiz.getQuestions().get(quiz.getLastQuestionIndex());
 
