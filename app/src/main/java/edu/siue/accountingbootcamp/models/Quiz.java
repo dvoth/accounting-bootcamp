@@ -181,6 +181,16 @@ public class Quiz extends ViewModel implements Parcelable {
         return questionNumber;
     }
 
+    public boolean started() {
+        for (Question question : getQuestions()) {
+            if (question.isAnswerAttempted()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void reset(Activity activity) {
 
         AppDatabase db;
