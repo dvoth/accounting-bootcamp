@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.siue.accountingbootcamp.models.Answer;
+import edu.siue.accountingbootcamp.models.AnswerDAO;
 import edu.siue.accountingbootcamp.models.Question;
 import edu.siue.accountingbootcamp.models.QuestionDAO;
 import edu.siue.accountingbootcamp.models.Quiz;
@@ -47,6 +48,7 @@ public class QuizFragment extends Fragment {
     public int questionNumber = 0;
     private Context mContext;
     QuestionDAO mQuestionDao;
+    AnswerDAO mAnswerDao;
     TableLayout creditTable;
     TableLayout debitTable;
     TextView questionText;
@@ -82,6 +84,7 @@ public class QuizFragment extends Fragment {
 
         db = AppDatabase.getAppDatabase(getActivity());
         mQuestionDao = db.questionDAO();
+        mAnswerDao = db.answerDAO();
 
         if (getArguments() != null) {
             quiz = getArguments().getParcelable(QUIZ_KEY);
@@ -137,8 +140,18 @@ public class QuizFragment extends Fragment {
         super.onStart();
         clearTables();
 
+        List<Question> questionsTexst = quiz.getQuestions();
+
         if (!quiz.started()) {
             Collections.shuffle(quiz.getQuestions());
+            List<Question> questions = quiz.getQuestions();
+            Question currentQuestion;
+
+            for (int i = 0; i < questions.size(); i++) {
+                currentQuestion = questions.get(i);
+                currentQuestion.setQuestionOrder(i + 1);
+                mQuestionDao.updateQuestionOrder(currentQuestion.getId(), currentQuestion.getQuestionOrder());
+            }
         }
 
         Question lastQuestion = quiz.getQuestions().get(quiz.getLastQuestionIndex());
@@ -198,6 +211,7 @@ public class QuizFragment extends Fragment {
                         question.setAnswerAttempted(true);
                         answer.setSelectedAnswer(true);
                         mQuestionDao.updateAnswerAttempted(question.getId(), true);
+                        mAnswerDao.updateSelectedAnswer(answer.getId(), answer.isSelectedAnswer());
 
                         if (answer.getIsanswer()) {
                             question.setAnsweredCorrectly(true);

@@ -16,6 +16,9 @@ public interface AnswerDAO {
     @Query("SELECT * FROM answers WHERE id = :id")
     Answer getAnswer(int id);
 
+    @Query("UPDATE answers SET selectedAnswer = :selectedAnswer WHERE id = :id")
+    void updateSelectedAnswer(int id, boolean selectedAnswer);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Answer... answers);
 
