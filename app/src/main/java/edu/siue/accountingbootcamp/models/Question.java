@@ -26,6 +26,7 @@ public class Question implements Parcelable {
     private String text;
     private boolean answeredCorrectly;
     private boolean answerAttempted;
+    private int questionOrder = -1;
 
     @Ignore
     private List<Answer> answers = null;
@@ -79,6 +80,14 @@ public class Question implements Parcelable {
 
     public void setAnswerAttempted(boolean answerAttempted) {
         this.answerAttempted = answerAttempted;
+    }
+
+    public int getQuestionOrder() {
+        return questionOrder;
+    }
+
+    public void setQuestionOrder(int questionOrder) {
+        this.questionOrder = questionOrder;
     }
 
     /*

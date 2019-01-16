@@ -9,7 +9,7 @@ import java.util.List;
 
 @Dao
 public interface QuestionDAO {
-    @Query("SELECT * FROM questions WHERE quizId = :quizId")
+    @Query("SELECT * FROM questions WHERE quizId = :quizId ORDER BY questionOrder")
     List<Question> getAll(int quizId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,4 +23,7 @@ public interface QuestionDAO {
 
     @Query("UPDATE questions SET answerAttempted = :answerAttempted WHERE id = :id")
     void updateAnswerAttempted(int id, boolean answerAttempted);
+
+    @Query("UPDATE questions SET questionOrder = :questionOrder WHERE id = :id")
+    void updateQuestionOrder(int id, int questionOrder);
 }

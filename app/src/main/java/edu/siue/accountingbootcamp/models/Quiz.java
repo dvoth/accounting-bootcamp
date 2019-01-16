@@ -11,6 +11,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.List;
 
 import edu.siue.accountingbootcamp.AppDatabase;
@@ -183,12 +184,12 @@ public class Quiz extends ViewModel implements Parcelable {
 
     public boolean started() {
         for (Question question : getQuestions()) {
-            if (question.isAnswerAttempted()) {
-                return true;
+            if (question.getQuestionOrder() == -1) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     public void reset(Activity activity) {
@@ -206,8 +207,10 @@ public class Quiz extends ViewModel implements Parcelable {
 
             mQuestionDao.updateAnswerAttempted(question.getId(), false);
             mQuestionDao.updateAnsweredCorrectly(question.getId(), false);
+            mQuestionDao.updateQuestionOrder(question.getId(), -1);
             question.setAnswerAttempted(false);
             question.setAnsweredCorrectly(false);
+            question.setQuestionOrder(-1);
         }
     }
 }
