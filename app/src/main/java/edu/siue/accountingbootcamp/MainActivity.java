@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity
             Bundle bundle = new Bundle();
 
             // Convert quiz to array to make it easier to pass to the QuizListFragment
-            Quiz[] quizArray = quizHashMap.values().toArray(new Quiz[quizHashMap.values().size()]);
+            Quiz[] quizArray = hashMapToArray(quizHashMap);
             bundle.putParcelableArray(QuizListFragment.QUIZ_LIST, quizArray);
 
             // Add data to the new fragment
@@ -242,6 +242,23 @@ public class MainActivity extends AppCompatActivity
             ft.add(R.id.quiz_list_container, fragment);
             ft.commit();
         }
+    }
+
+    public Quiz[] hashMapToArray(HashMap<Integer, Quiz> hashMap) {
+        Quiz[] quizzes = quizHashMap.values().toArray(new Quiz[hashMap.values().size()]);
+
+        // Insertion sort quizzes since hash map doesn't maintain order
+        for (int i = 1; i < quizzes.length; i++) {
+            Quiz key = quizzes[i];
+            int j = i - 1;
+            while (j >= 0 && quizzes[j].getQuizOrder() > key.getQuizOrder()) {
+                quizzes[j + 1] = quizzes[j];
+                j = j - 1;
+            }
+            quizzes[j + 1] = key;
+        }
+
+        return quizzes;
     }
 
     public void displayQuiz(int quizOrder) {
